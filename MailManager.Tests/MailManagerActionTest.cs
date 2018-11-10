@@ -2,9 +2,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MailManager.Config;
@@ -13,8 +10,6 @@ using MailManager.Monitor;
 using System.Diagnostics;
 using System.Net.Mail;
 using NUnit.Framework;
-using System.Drawing.Printing;
-using System.Drawing;
 
 namespace MailManager.Tests
 {
