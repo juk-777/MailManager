@@ -101,16 +101,6 @@ namespace MailManager.Monitor
             return mailBody;
         }
 
-        //private StringBuilder GetMailTo(Message message)
-        //{
-        //    StringBuilder mailTo = new StringBuilder();
-
-        //    foreach (RfcMailAddress to in message.Headers.To)
-        //        mailTo.Append(to);
-
-        //    return mailTo;
-        //}
-
         public List<MailEntity> GetUnseenMessages(List<string> seenUids, out List<string> seenUidsNew)
         {
             // Fetch all the current uids seen
