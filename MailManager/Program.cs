@@ -14,9 +14,40 @@ namespace MailManager
     {
         static void Main(string[] args)
         {
-            var xmlSettingsPath = @"Files\MailManagerSettings.xml";
+            var configPath = @"Files\MailManagerSettings.xml";
 
             Console.WriteLine("Добро пожаловать в MailManager ...");
+
+            Console.WriteLine("Введите '1' для того, чтобы считать конфигурацию из файла App.config.");
+            Console.WriteLine("Введите '0' для того, чтобы считать конфигурацию из другого файла.");
+            int answer = Convert.ToInt32(Console.ReadLine());
+
+            switch (answer)
+            {
+                case 1:
+                    Console.WriteLine("Считываю конфигурацию из файла App.config");
+                    break; // переход к case 5
+                case 0:
+                    Console.WriteLine($"Введите '1' для того, чтобы считать конфигурацию из предварительно подготовленного XML файла {configPath}");
+                    Console.WriteLine("Либо введите любой другой путь к файлу конфигурации.");
+                    configPath = Console.ReadLine();
+
+                    switch (configPath)
+                    {
+                        case "1":
+                            configPath = @"Files\MailManagerSettings.xml";
+                            Console.WriteLine($"Файл: XML. Путь: {configPath} ...");
+                            break;
+                        default:
+                            Console.WriteLine($"Файл: xxx. Путь: {configPath} ...");
+                            break;
+                    }
+
+                    break;
+                default:                    
+                    Console.WriteLine("Ошибочный ввод. \nСчитываю конфигурацию из файла App.config");
+                    break;
+            }
 
             #region Регион 
 
@@ -28,7 +59,7 @@ namespace MailManager
 
             #region Инициализация без IoC
 
-            //IMailManagerBL mmBL = new MailManagerBL(new ConfigReader(new XmlConfigStream(xmlSettingsPath)),
+            //IMailManagerBL mmBL = new MailManagerBL(new ConfigReader(new XmlConfigStream(configPath)),
             //    new MailMonitor(new OpenPopProvider(),
             //        new Action.MailAction(new SmtpSender(new SendWork()), new CopyToFolder(new CopyWork()), new ConsoleNotify(), new PrintDefault(new PrintWork()))));
 
@@ -39,7 +70,7 @@ namespace MailManager
             var container = new UnityContainer();
             container.RegisterType<IConfigReader, ConfigReader>();
             container.RegisterType<IConfigWriter, ConfigWriter>();
-            container.RegisterType<IConfigStream, XmlConfigStream>(new InjectionConstructor(new InjectionParameter<string>(xmlSettingsPath)));
+            container.RegisterType<IConfigStream, XmlConfigStream>(new InjectionConstructor(new InjectionParameter<string>(configPath)));
             container.RegisterType<IMailMonitor, MailMonitor>();
             container.RegisterType<IMailProvider, OpenPopProvider>();
             container.RegisterType<IMailAction, MailAction>();
