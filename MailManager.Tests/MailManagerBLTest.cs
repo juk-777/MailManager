@@ -85,7 +85,7 @@ namespace MailManager.Tests
             var mockConfigReader = new Mock<IConfigReader>();
             var mockMailMonitor = new Mock<IMailMonitor>();
 
-            IList<ConfigEntity> configEntityList = new List<ConfigEntity>();
+            List<ConfigEntity> configEntityList = new List<ConfigEntity>();
             configEntityList.Add(new ConfigEntity());
 
             mockConfigReader

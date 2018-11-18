@@ -11,7 +11,7 @@ namespace MailManager.Config
         {
             SettingsPath = setPath;
         }
-        public IList<ConfigEntity> ReadStream()
+        public List<ConfigEntity> ReadStream()
         {
             if (SettingsPath == null)
                 throw new ApplicationException("Не указан путь к файлу конфигурации!");
@@ -34,7 +34,7 @@ namespace MailManager.Config
             configEntity2.Login = "tiras.school.2";
             configEntity2.Password = "2TiraS2";
 
-            IList<ConfigEntity> configEntityList = new List<ConfigEntity>();
+            List<ConfigEntity> configEntityList = new List<ConfigEntity>();
             configEntityList.Add(configEntity1);
             configEntityList.Add(configEntity2);
 

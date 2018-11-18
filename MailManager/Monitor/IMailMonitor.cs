@@ -5,7 +5,7 @@ namespace MailManager.Monitor
 {
     public interface IMailMonitor
     {
-        void StartMonitor(IList<ConfigEntity> configEntityList);
+        void StartMonitor(List<ConfigEntity> configEntityList);
         void StopMonitor();
         List<string> FirstAccessToMail(ConfigEntity configEntity);
         void OtherAccessToMail(object obj);

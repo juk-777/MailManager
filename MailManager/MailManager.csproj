@@ -42,6 +42,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
@@ -96,6 +97,7 @@
     <Compile Include="Action\SmtpSender.cs" />
     <Compile Include="BL\IMailManagerBL.cs" />
     <Compile Include="BL\MailManagerBL.cs" />
+    <Compile Include="Config\AppConfigStream.cs" />
     <Compile Include="Config\ConfigReader.cs" />
     <Compile Include="Config\ConfigWriter.cs" />
     <Compile Include="Config\IConfigReader.cs" />

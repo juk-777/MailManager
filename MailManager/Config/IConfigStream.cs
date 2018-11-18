@@ -4,6 +4,6 @@ namespace MailManager.Config
 {
     public interface IConfigStream
     {
-        IList<ConfigEntity> ReadStream();
+        List<ConfigEntity> ReadStream();
     }
 }

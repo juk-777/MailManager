@@ -28,7 +28,7 @@ namespace MailManager.BL
 
             //считывание конфигурации
             Console.WriteLine("\nСчитывание конфигурации ...");
-            IList<ConfigEntity> configEntityList = await Task.Run(() => _configReader.ReadConfig()); // _configReader.ReadConfig();            
+            List<ConfigEntity> configEntityList = await Task.Run(() => _configReader.ReadConfig()); // _configReader.ReadConfig();            
             //Thread.Sleep(3000);
 
             if (token.IsCancellationRequested)

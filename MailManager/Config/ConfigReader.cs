@@ -10,9 +10,9 @@ namespace MailManager.Config
         {
             _configStream = configStream;
         }
-        public IList<ConfigEntity> ReadConfig()
+        public List<ConfigEntity> ReadConfig()
         {
-            IList<ConfigEntity> confEntityList = _configStream.ReadStream();
+            List<ConfigEntity> confEntityList = _configStream.ReadStream();
 
             return confEntityList;
         }

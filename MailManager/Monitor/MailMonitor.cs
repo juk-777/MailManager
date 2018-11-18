@@ -18,7 +18,7 @@ namespace MailManager.Monitor
         static object locker = new object();
         static private List<string> _seenUids = new List<string>();
         static private Timer _timer;
-        public IList<Timer> _timers = new List<Timer>();
+        public List<Timer> _timers = new List<Timer>();
 
         public MailMonitor(IMailProvider mailProvider, IMailAction mailAction)
         {
@@ -26,7 +26,7 @@ namespace MailManager.Monitor
             _mailAction = mailAction;
         }
 
-        public void StartMonitor(IList<ConfigEntity> configEntityList)
+        public void StartMonitor(List<ConfigEntity> configEntityList)
         {
             foreach (ConfigEntity configEntity in configEntityList)
             {

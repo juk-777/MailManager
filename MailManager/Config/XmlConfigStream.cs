@@ -13,30 +13,23 @@ namespace MailManager.Config
         {
             SettingsPath = setPath;
         }
-        public IList<ConfigEntity> ReadStream()
+        public List<ConfigEntity> ReadStream()
         {            
             if (SettingsPath == null)
                 throw new ApplicationException("Не указан путь к файлу конфигурации!");
 
             Console.WriteLine($"Файл: XML. Путь: {SettingsPath} ...");
 
-            IList<ConfigEntity> configEntityList = new List<ConfigEntity>();
+            List<ConfigEntity> configEntityList = new List<ConfigEntity>();
 
             // передаем в конструктор тип класса
             XmlSerializer formatter = new XmlSerializer(typeof(List<ConfigEntity>));
 
             // десериализация
-            using (FileStream fs = new FileStream(@"Files\MailManagerSettings.xml", FileMode.OpenOrCreate))
+            using (FileStream fs = new FileStream(SettingsPath, FileMode.OpenOrCreate))
             {
-                //Person[] newpeople = (Person[])formatter.Deserialize(fs);
                 configEntityList = (List<ConfigEntity>)formatter.Deserialize(fs);
-
                 Console.WriteLine("Объекты десериализованы");
-
-                //foreach (ConfigEntity configEntity in configEntityList)
-                //{
-                //    Console.WriteLine($"Mail: {configEntity.Mail}   Login: {configEntity.Login}   Password: {configEntity.Password}");
-                //}
             }
 
             return configEntityList;
