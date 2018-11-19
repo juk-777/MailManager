@@ -5,6 +5,6 @@ namespace MailManager.Action
 {
     public interface INotify
     {
-        bool NotifyToAsync(ConfigEntity configEntity, MailEntity message, int rowNumber);
+        bool NotifyTo(ConfigEntity configEntity, MailEntity message, int rowNumber);
     }
 }

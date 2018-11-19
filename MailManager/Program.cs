@@ -68,10 +68,6 @@ namespace MailManager
             container.RegisterType<INotify, ConsoleNotify>();
             container.RegisterType<IPrint, PrintDefault>();
 
-            container.RegisterType<ISendWork, SendWork>();
-            container.RegisterType<ICopyWork, CopyWork>();
-            container.RegisterType<IPrintWork, PrintWork>();
-
             //container.RegisterType<IMailManagerBL, MailManagerBL>(new ContainerControlledLifetimeManager());
             container.RegisterType<IMailManagerBL, MailManagerBL>();
 

@@ -21,23 +21,23 @@ namespace MailManager.Action
 
         public void ActionSend(ConfigEntity configEntity, MailEntity message, int rowNumber)
         {
-            _mailSender.SendAsync(configEntity, message, rowNumber);
+            _mailSender.SendTo(configEntity, message, rowNumber);
         }
 
         public void ActionCopy(ConfigEntity configEntity, MailEntity message, int rowNumber)
         {
-            _mailCopy.CopyToAsync(configEntity, message, rowNumber);
+            _mailCopy.CopyTo(configEntity, message, rowNumber);
         }
 
         public void ActionPrint(ConfigEntity configEntity, MailEntity message, int rowNumber)
         {
-            _print.PrintToAsync(configEntity, message, rowNumber);
+            _print.PrintTo(configEntity, message, rowNumber);
         }
 
-        public async void ActionNotify(ConfigEntity configEntity, MailEntity message, int rowNumber)
+        public void ActionNotify(ConfigEntity configEntity, MailEntity message, int rowNumber)
         {
-            //_notify.NotifyToAsync(configEntity, message, rowNumber);
-            await Task.Run(() => _notify.NotifyToAsync(configEntity, message, rowNumber));
+            _notify.NotifyTo(configEntity, message, rowNumber);
+            //await Task.Run(() => _notify.NotifyToAsync(configEntity, message, rowNumber));
         }
          
     }

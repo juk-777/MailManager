@@ -82,18 +82,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Action\CopyToFolder.cs" />
-    <Compile Include="Action\CopyWork.cs" />
-    <Compile Include="Action\ICopyWork.cs" />
     <Compile Include="Action\IMailCopy.cs" />
     <Compile Include="Action\IMailSender.cs" />
     <Compile Include="Action\INotify.cs" />
     <Compile Include="Action\ConsoleNotify.cs" />
     <Compile Include="Action\IPrint.cs" />
-    <Compile Include="Action\IPrintWork.cs" />
-    <Compile Include="Action\ISendWork.cs" />
     <Compile Include="Action\PrintDefault.cs" />
-    <Compile Include="Action\PrintWork.cs" />
-    <Compile Include="Action\SendWork.cs" />
     <Compile Include="Action\SmtpSender.cs" />
     <Compile Include="BL\IMailManagerBL.cs" />
     <Compile Include="BL\MailManagerBL.cs" />

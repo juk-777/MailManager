@@ -7,9 +7,12 @@ namespace MailManager.Action
 {
     public class ConsoleNotify : INotify
     {
-        public bool NotifyToAsync(ConfigEntity configEntity, MailEntity message, int rowNumber)
+        public bool NotifyTo(ConfigEntity configEntity, MailEntity message, int rowNumber)
         {
-            Console.WriteLine($"Notify ...");
+            ConsoleColor color = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine($"\nNotify ...");
+            Console.ForegroundColor = color;            
 
             StringBuilder mailTo = new StringBuilder();
             mailTo = MailMonitor.GetMailTo(message);

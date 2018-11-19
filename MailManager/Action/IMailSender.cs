@@ -6,7 +6,6 @@ namespace MailManager.Action
 {
     public interface IMailSender
     {
-        Task<bool> SendAsync(ConfigEntity configEntity, MailEntity message, int rowNumber);
-        //void Send(ConfigEntity configEntity, MailEntity message, int rowNumber);
+        bool SendTo(ConfigEntity configEntity, MailEntity message, int rowNumber);
     }
 }

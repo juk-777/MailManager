@@ -6,6 +6,6 @@ namespace MailManager.Action
 {
     public interface IMailCopy
     {
-        Task<bool> CopyToAsync(ConfigEntity configEntity, MailEntity message, int rowNumber);
+        bool CopyTo(ConfigEntity configEntity, MailEntity message, int rowNumber);
     }
 }

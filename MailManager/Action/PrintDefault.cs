@@ -2,33 +2,42 @@
 using MailManager.Config;
 using MailManager.Monitor;
 using System;
-using System.Threading.Tasks;
+using System.Drawing.Printing;
+using System.Drawing;
 
 namespace MailManager.Action
 {
     public class PrintDefault : IPrint
     {
-        private readonly IPrintWork _printWork;
+        public StringBuilder MailResult { get; set; }        
 
-        public PrintDefault(IPrintWork printWork)
+        public bool PrintTo(ConfigEntity configEntity, MailEntity message, int rowNumber)
         {
-            _printWork = printWork;
+            ConsoleColor color = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine($"\nPrint ...");
+            Console.ForegroundColor = color;            
+
+            MailResult = new StringBuilder();
+            MailResult.Append("To:      " + MailMonitor.GetMailTo(message));
+            MailResult.AppendLine();
+            MailResult.Append("From:    " + message.From);
+            MailResult.AppendLine();
+            MailResult.Append("Subject: " + message.Subject);
+            MailResult.AppendLine();
+            MailResult.Append("Body:    " + message.Body);
+
+            PrintDocument printDoc = new PrintDocument();
+            printDoc.PrintPage += PrintPageHandler;
+
+            printDoc.Print();
+            Console.WriteLine("Письмо распечатано");
+            return true;
         }
 
-        public async Task<bool> PrintToAsync(ConfigEntity configEntity, MailEntity message, int rowNumber)
+        private void PrintPageHandler(object sender, PrintPageEventArgs e)
         {
-            Console.WriteLine($"Print ...");
-
-            StringBuilder mailResult = new StringBuilder();
-            mailResult.Append("To:      " + MailMonitor.GetMailTo(message));
-            mailResult.AppendLine();
-            mailResult.Append("From:    " + message.From);
-            mailResult.AppendLine();
-            mailResult.Append("Subject: " + message.Subject);
-            mailResult.AppendLine();
-            mailResult.Append("Body:    " + message.Body);
-
-            return await Task.Run(() => _printWork.DoWork(mailResult));
+            e.Graphics.DrawString(MailResult.ToString(), new Font("Arial", 14), Brushes.Black, 0, 0);
         }
     }
 }

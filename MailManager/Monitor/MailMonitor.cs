@@ -214,26 +214,30 @@ namespace MailManager.Monitor
             }            
         }
 
-        public void DoMailAction(ConfigEntity configEntity, MailEntity message)
+        public async void DoMailAction(ConfigEntity configEntity, MailEntity message)
         {            
             for (int i = 0; i < configEntity.MailActions.Length; i++)
             {
                 switch (configEntity.MailActions[i].ActType)
                 {
                     case ActionType.Notify:
-                        _mailAction.ActionNotify(configEntity, message, i);
+                        //_mailAction.ActionNotify(configEntity, message, i);
+                        await Task.Run(() => _mailAction.ActionNotify(configEntity, message, i));
                         break;
 
                     case ActionType.CopyTo:                            
-                        _mailAction.ActionCopy(configEntity, message, i);
+                        //_mailAction.ActionCopy(configEntity, message, i);
+                        await Task.Run(() => _mailAction.ActionCopy(configEntity, message, i));
                         break;
 
                     case ActionType.Forward:
-                        _mailAction.ActionSend(configEntity, message, i);
+                        //_mailAction.ActionSend(configEntity, message, i);
+                        await Task.Run(() => _mailAction.ActionSend(configEntity, message, i));
                         break;
 
                     case ActionType.Print:                            
-                        _mailAction.ActionPrint(configEntity, message, i);
+                        //_mailAction.ActionPrint(configEntity, message, i);
+                        await Task.Run(() => _mailAction.ActionPrint(configEntity, message, i));
                         break;
                 }
             }            
@@ -248,6 +252,8 @@ namespace MailManager.Monitor
 
             return mailTo;
         }
+
+        #region GetMailBody
 
         //private StringBuilder GetMailBody(Message message)
         //{
@@ -265,6 +271,7 @@ namespace MailManager.Monitor
         //    return mailBody;
         //}
 
-        
+        #endregion
+
     }
 }
