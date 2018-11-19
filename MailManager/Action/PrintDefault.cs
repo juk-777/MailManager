@@ -15,7 +15,7 @@ namespace MailManager.Action
             _printWork = printWork;
         }
 
-        public async Task<bool> PrintTo(ConfigEntity configEntity, MailEntity message, int rowNumber)
+        public async Task<bool> PrintToAsync(ConfigEntity configEntity, MailEntity message, int rowNumber)
         {
             Console.WriteLine($"Print ...");
 

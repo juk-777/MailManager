@@ -229,9 +229,7 @@ namespace MailManager.Monitor
                         break;
 
                     case ActionType.Forward:
-                        //асинхронная отправка письма
-                        //_mailAction.ActionSendEmailAsync(configEntity, message, i).GetAwaiter();
-                        _mailAction.ActionSendAsync(configEntity, message, i);
+                        _mailAction.ActionSend(configEntity, message, i);
                         break;
 
                     case ActionType.Print:                            

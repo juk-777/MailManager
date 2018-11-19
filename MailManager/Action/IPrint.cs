@@ -6,6 +6,6 @@ namespace MailManager.Action
 {
     public interface IPrint
     {
-        Task<bool> PrintTo(ConfigEntity configEntity, MailEntity message, int rowNumber);
+        Task<bool> PrintToAsync(ConfigEntity configEntity, MailEntity message, int rowNumber);
     }
 }

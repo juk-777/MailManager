@@ -7,7 +7,7 @@ namespace MailManager.Action
 {
     public class ConsoleNotify : INotify
     {
-        public bool NotifyTo(ConfigEntity configEntity, MailEntity message, int rowNumber)
+        public bool NotifyToAsync(ConfigEntity configEntity, MailEntity message, int rowNumber)
         {
             Console.WriteLine($"Notify ...");
 

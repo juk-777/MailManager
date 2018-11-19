@@ -1,5 +1,6 @@
 ﻿using MailManager.Config;
 using MailManager.Monitor;
+using System.Threading.Tasks;
 
 namespace MailManager.Action
 {
@@ -18,24 +19,25 @@ namespace MailManager.Action
             _print = print;
         }
 
-        public void ActionSendAsync(ConfigEntity configEntity, MailEntity message, int rowNumber)
+        public void ActionSend(ConfigEntity configEntity, MailEntity message, int rowNumber)
         {
             _mailSender.SendAsync(configEntity, message, rowNumber);
         }
 
         public void ActionCopy(ConfigEntity configEntity, MailEntity message, int rowNumber)
         {
-            _mailCopy.CopyTo(configEntity, message, rowNumber);
+            _mailCopy.CopyToAsync(configEntity, message, rowNumber);
         }
 
         public void ActionPrint(ConfigEntity configEntity, MailEntity message, int rowNumber)
         {
-            _print.PrintTo(configEntity, message, rowNumber);
+            _print.PrintToAsync(configEntity, message, rowNumber);
         }
 
-        public void ActionNotify(ConfigEntity configEntity, MailEntity message, int rowNumber)
+        public async void ActionNotify(ConfigEntity configEntity, MailEntity message, int rowNumber)
         {
-            _notify.NotifyTo(configEntity, message, rowNumber);
+            //_notify.NotifyToAsync(configEntity, message, rowNumber);
+            await Task.Run(() => _notify.NotifyToAsync(configEntity, message, rowNumber));
         }
          
     }
