@@ -19,7 +19,7 @@ namespace MailManager
             string configPath;
 
             Console.WriteLine("Добро пожаловать в MailManager ...");
-            Console.WriteLine("Введите '1' для того, чтобы считать конфигурацию из файла App.config.");
+            Console.WriteLine("\nВведите '1' для того, чтобы считать конфигурацию из файла App.config.");
             Console.WriteLine("Введите '0' для того, чтобы считать конфигурацию из другого файла.");
             int answer = Convert.ToInt32(Console.ReadLine());
 

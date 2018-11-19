@@ -27,153 +27,153 @@ namespace MailManager.Tests
             Debug.WriteLine("Test Cleanup");
         }
 
-        [TestMethod]
-        public void MailMonitor_StartMonitorTask_Verify()
-        {
-            var mockMailProvider = new Mock<IMailProvider>();
-            var mockMailAction = new Mock<IMailAction>();
+        //[TestMethod]
+        //public void MailMonitor_StartMonitorTask_Verify()
+        //{
+        //    var mockMailProvider = new Mock<IMailProvider>();
+        //    var mockMailAction = new Mock<IMailAction>();
 
-            var mm = new MailMonitor(mockMailProvider.Object, mockMailAction.Object);
-            mm.StartMonitorTask(new ConfigEntity());
+        //    var mm = new MailMonitor(mockMailProvider.Object, mockMailAction.Object);
+        //    mm.StartMonitorTask(new ConfigEntity());
 
-            //mockMailProvider.VerifyAll();
-            mockMailProvider.Verify(x => x.Initialize(It.IsAny<ConfigEntity>()), Times.AtLeastOnce);
-            mockMailProvider.Verify(x => x.Connect(), Times.AtLeastOnce);
-            mockMailProvider.Verify(x => x.Disconnect(), Times.AtLeastOnce);
-            mockMailProvider.Verify(x => x.Dispose(), Times.AtLeastOnce);
+        //    //mockMailProvider.VerifyAll();
+        //    mockMailProvider.Verify(x => x.Initialize(It.IsAny<ConfigEntity>()), Times.AtLeastOnce);
+        //    mockMailProvider.Verify(x => x.Connect(), Times.AtLeastOnce);
+        //    mockMailProvider.Verify(x => x.Disconnect(), Times.AtLeastOnce);
+        //    mockMailProvider.Verify(x => x.Dispose(), Times.AtLeastOnce);
 
-            mockMailAction.VerifyAll();
-        }
+        //    mockMailAction.VerifyAll();
+        //}
 
-        [TestMethod]
-        public void MailMonitor_StoptMonitor_Verify()
-        {
-            var mockMailProvider = new Mock<IMailProvider>();
-            var mockMailAction = new Mock<IMailAction>();
-            var mockTimer = new Mock<IDisposable>();
+        //[TestMethod]
+        //public void MailMonitor_StoptMonitor_Verify()
+        //{
+        //    var mockMailProvider = new Mock<IMailProvider>();
+        //    var mockMailAction = new Mock<IMailAction>();
+        //    var mockTimer = new Mock<IDisposable>();
 
-            mockTimer
-                .Setup(x => x.Dispose());
-            //void Func() => mm.StopMonitor();
+        //    mockTimer
+        //        .Setup(x => x.Dispose());
+        //    //void Func() => mm.StopMonitor();
 
-            var mm = new MailMonitor(mockMailProvider.Object, mockMailAction.Object);
-            var t = mockTimer.Object;
+        //    var mm = new MailMonitor(mockMailProvider.Object, mockMailAction.Object);
+        //    var t = mockTimer.Object;
             
-            // устанавливаем метод обратного вызова
-            TimerCallback tm = new TimerCallback(mm.OtherAccessToMail);
-            // создаем таймер
-            Timer timer = new Timer(tm, new ConfigEntity(), 0, 1000);            
-            mm._timers.Add(timer);
+        //    // устанавливаем метод обратного вызова
+        //    TimerCallback tm = new TimerCallback(mm.OtherAccessToMail);
+        //    // создаем таймер
+        //    Timer timer = new Timer(tm, new ConfigEntity(), 0, 1000);            
+        //    mm._timers.Add(timer);
 
-            mm.StopMonitor();
+        //    mm.StopMonitor();
 
-            mockTimer.Verify();
+        //    mockTimer.Verify();
             
-        }
+        //}
 
-        [TestMethod]
-        public void MailMonitor_StartMonitor_Verify()
-        {
-            var mockMailProvider = new Mock<IMailProvider>();
-            var mockMailAction = new Mock<IMailAction>();
+        //[TestMethod]
+        //public void MailMonitor_StartMonitor_Verify()
+        //{
+        //    var mockMailProvider = new Mock<IMailProvider>();
+        //    var mockMailAction = new Mock<IMailAction>();
 
-            ConfigEntity configEntity = new ConfigEntity();
-            configEntity.MailActions = new Config.MailAction[]
-            {
-                new Config.MailAction { ActType = ActionType.Notify, ActTypeValue = "yes" },
-                new Config.MailAction { ActType = ActionType.Print, ActTypeValue = "yes" },
-                new Config.MailAction { ActType = ActionType.CopyTo, ActTypeValue = "folder" },
-                new Config.MailAction { ActType = ActionType.Forward, ActTypeValue = "juk_777@mail.ru" },
-            };
-            configEntity.IdentityMessages = new IdentityMessage[]
-            {
-                new IdentityMessage { IdType = IdentityType.To, IdTypeValue = "gus.guskovskij@mail.ru" },
-                new IdentityMessage { IdType = IdentityType.From, IdTypeValue = "juk_777@mail.ru" },
-                new IdentityMessage { IdType = IdentityType.Title, IdTypeValue = "пис" },
-                new IdentityMessage { IdType = IdentityType.Body, IdTypeValue = "вап" }
-            };
-            configEntity.Mail = "pop.yandex.ru";
-            configEntity.Port = 995;
-            configEntity.Login = "tiras.school.2";
-            configEntity.Password = "pas";
+        //    ConfigEntity configEntity = new ConfigEntity();
+        //    configEntity.MailActions = new Config.MailAction[]
+        //    {
+        //        new Config.MailAction { ActType = ActionType.Notify, ActTypeValue = "yes" },
+        //        new Config.MailAction { ActType = ActionType.Print, ActTypeValue = "yes" },
+        //        new Config.MailAction { ActType = ActionType.CopyTo, ActTypeValue = "folder" },
+        //        new Config.MailAction { ActType = ActionType.Forward, ActTypeValue = "juk_777@mail.ru" },
+        //    };
+        //    configEntity.IdentityMessages = new IdentityMessage[]
+        //    {
+        //        new IdentityMessage { IdType = IdentityType.To, IdTypeValue = "gus.guskovskij@mail.ru" },
+        //        new IdentityMessage { IdType = IdentityType.From, IdTypeValue = "juk_777@mail.ru" },
+        //        new IdentityMessage { IdType = IdentityType.Title, IdTypeValue = "пис" },
+        //        new IdentityMessage { IdType = IdentityType.Body, IdTypeValue = "вап" }
+        //    };
+        //    configEntity.Mail = "pop.yandex.ru";
+        //    configEntity.Port = 995;
+        //    configEntity.Login = "tiras.school.2";
+        //    configEntity.Password = "pas";
 
-            List<ConfigEntity> configEntities = new List<ConfigEntity>();
-            configEntities.Add(configEntity);
+        //    List<ConfigEntity> configEntities = new List<ConfigEntity>();
+        //    configEntities.Add(configEntity);
 
-            var mm = new MailMonitor(mockMailProvider.Object, mockMailAction.Object);
+        //    var mm = new MailMonitor(mockMailProvider.Object, mockMailAction.Object);
 
-            mm.StartMonitor(configEntities);
+        //    mm.StartMonitor(configEntities);
 
-            mockMailProvider.VerifyAll();
-            mockMailAction.VerifyAll();
+        //    mockMailProvider.VerifyAll();
+        //    mockMailAction.VerifyAll();
 
-        }
+        //}
 
-        [TestMethod]
-        public void MailMonitor_FirstAccessToMail_GetAllMessages_WasCalled()
-        {
-            var mockMailProvider = new Mock<IMailProvider>();
-            var mockMailAction = new Mock<IMailAction>();
+        //[TestMethod]
+        //public void MailMonitor_FirstAccessToMail_GetAllMessages_WasCalled()
+        //{
+        //    var mockMailProvider = new Mock<IMailProvider>();
+        //    var mockMailAction = new Mock<IMailAction>();
 
-            List<MailEntity> allMessages = new List<MailEntity>();
-            List<string> allUids = new List<string>();
+        //    List<MailEntity> allMessages = new List<MailEntity>();
+        //    List<string> allUids = new List<string>();
 
-            //mockMailProvider
-            //    .Setup(x => x.GetAllMessages(out allMessages, out allUids));
+        //    //mockMailProvider
+        //    //    .Setup(x => x.GetAllMessages(out allMessages, out allUids));
 
-            var mm = new MailMonitor(mockMailProvider.Object, mockMailAction.Object);
-            mm.FirstAccessToMail(new ConfigEntity());
+        //    var mm = new MailMonitor(mockMailProvider.Object, mockMailAction.Object);
+        //    mm.FirstAccessToMail(new ConfigEntity());
 
-            mockMailProvider.Verify(x => x.GetAllMessages(out allMessages, out allUids), Times.AtLeastOnce);
+        //    mockMailProvider.Verify(x => x.GetAllMessages(out allMessages, out allUids), Times.AtLeastOnce);
 
-        }
+        //}
 
-        [TestMethod]
-        public void MailMonitor_ProcessingMail_Verify()
-        {
-            var mockMailProvider = new Mock<IMailProvider>();
-            var mockMailAction = new Mock<IMailAction>();
+        //[TestMethod]
+        //public void MailMonitor_ProcessingMail_Verify()
+        //{
+        //    var mockMailProvider = new Mock<IMailProvider>();
+        //    var mockMailAction = new Mock<IMailAction>();
                         
-            var mailEntity = new MailEntity();
-            mailEntity.To.Add(new MailAddress("gus.guskovskij@mail.ru"));
-            mailEntity.From = new MailAddress("juk_777@mail.ru");
-            mailEntity.Subject = "1 письмо";
-            mailEntity.Body = new StringBuilder("вап ваппррр");
-            mailEntity.DateSent = DateTime.Now;
+        //    var mailEntity = new MailEntity();
+        //    mailEntity.To.Add(new MailAddress("gus.guskovskij@mail.ru"));
+        //    mailEntity.From = new MailAddress("juk_777@mail.ru");
+        //    mailEntity.Subject = "1 письмо";
+        //    mailEntity.Body = new StringBuilder("вап ваппррр");
+        //    mailEntity.DateSent = DateTime.Now;
 
-            ConfigEntity configEntity = new ConfigEntity();
-            configEntity.MailActions = new Config.MailAction[]
-            {
-                new Config.MailAction { ActType = ActionType.Notify, ActTypeValue = "yes" },
-                new Config.MailAction { ActType = ActionType.Print, ActTypeValue = "yes" },
-                new Config.MailAction { ActType = ActionType.CopyTo, ActTypeValue = "folder" },
-                new Config.MailAction { ActType = ActionType.Forward, ActTypeValue = "juk_777@mail.ru" },
-            };
-            configEntity.IdentityMessages = new IdentityMessage[]
-            {
-                new IdentityMessage { IdType = IdentityType.To, IdTypeValue = "gus.guskovskij@mail.ru" },
-                new IdentityMessage { IdType = IdentityType.From, IdTypeValue = "juk_777@mail.ru" },
-                new IdentityMessage { IdType = IdentityType.Title, IdTypeValue = "пис" },
-                new IdentityMessage { IdType = IdentityType.Body, IdTypeValue = "вап" }
-            };
-            configEntity.Mail = "pop.yandex.ru";
-            configEntity.Port = 995;
-            configEntity.Login = "tiras.school.2";
-            configEntity.Password = "pas";
+        //    ConfigEntity configEntity = new ConfigEntity();
+        //    configEntity.MailActions = new Config.MailAction[]
+        //    {
+        //        new Config.MailAction { ActType = ActionType.Notify, ActTypeValue = "yes" },
+        //        new Config.MailAction { ActType = ActionType.Print, ActTypeValue = "yes" },
+        //        new Config.MailAction { ActType = ActionType.CopyTo, ActTypeValue = "folder" },
+        //        new Config.MailAction { ActType = ActionType.Forward, ActTypeValue = "juk_777@mail.ru" },
+        //    };
+        //    configEntity.IdentityMessages = new IdentityMessage[]
+        //    {
+        //        new IdentityMessage { IdType = IdentityType.To, IdTypeValue = "gus.guskovskij@mail.ru" },
+        //        new IdentityMessage { IdType = IdentityType.From, IdTypeValue = "juk_777@mail.ru" },
+        //        new IdentityMessage { IdType = IdentityType.Title, IdTypeValue = "пис" },
+        //        new IdentityMessage { IdType = IdentityType.Body, IdTypeValue = "вап" }
+        //    };
+        //    configEntity.Mail = "pop.yandex.ru";
+        //    configEntity.Port = 995;
+        //    configEntity.Login = "tiras.school.2";
+        //    configEntity.Password = "pas";
 
-            List<MailEntity> allMessages = new List<MailEntity>();
-            allMessages.Add(mailEntity);
-            List<string> allUids = new List<string>();
+        //    List<MailEntity> allMessages = new List<MailEntity>();
+        //    allMessages.Add(mailEntity);
+        //    List<string> allUids = new List<string>();
 
-            mockMailProvider
-                .Setup(x => x.GetAllMessages(out allMessages, out allUids));
+        //    mockMailProvider
+        //        .Setup(x => x.GetAllMessages(out allMessages, out allUids));
 
-            var mm = new MailMonitor(mockMailProvider.Object, mockMailAction.Object);
-            mm.ProcessingMail(allMessages, configEntity);
+        //    var mm = new MailMonitor(mockMailProvider.Object, mockMailAction.Object);
+        //    mm.ProcessingMail(allMessages, configEntity);
 
-            mockMailProvider.Verify();
-            mockMailAction.VerifyAll();
+        //    mockMailProvider.Verify();
+        //    mockMailAction.VerifyAll();
 
-        }
+        //}
     }
 }

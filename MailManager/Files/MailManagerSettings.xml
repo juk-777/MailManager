@@ -12,7 +12,7 @@
       </MailAction>
       <MailAction>
         <ActType>Forward</ActType>
-        <ActTypeValue>juk_777@mail.ru</ActTypeValue>
+        <ActTypeValue></ActTypeValue>
       </MailAction>
     </MailActions>
     <IdentityMessages>
@@ -47,10 +47,6 @@
       <MailAction>
         <ActType>CopyTo</ActType>
         <ActTypeValue>qw</ActTypeValue>
-      </MailAction>
-      <MailAction>
-        <ActType>Print</ActType>
-        <ActTypeValue>yes</ActTypeValue>
       </MailAction>
     </MailActions>
     <IdentityMessages>

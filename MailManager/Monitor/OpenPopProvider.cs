@@ -11,56 +11,37 @@ namespace MailManager.Monitor
     public class OpenPopProvider : IMailProvider
     {
         private bool _disposed = false;
-        public ConfigEntity ConfigEntity { get; set; }
-        private Pop3Client _client;
 
-        public void Initialize(ConfigEntity configEntity)
+        public void GetAllMessages(ConfigEntity configEntity, out List<MailEntity> allMessages, out List<string> allUids)
         {
-            ConfigEntity = configEntity;
-            _client = new Pop3Client();
-        }
-
-        public void Connect()
-        {
-            //Pop3Client client = new Pop3Client(); //_client = new Pop3Client();
-
-            // Connect to the server
-            _client.Connect(ConfigEntity.Mail, ConfigEntity.Port, useSsl: true);
-
-            // Authenticate ourselves towards the server
-            _client.Authenticate(ConfigEntity.Login, ConfigEntity.Password);
-
-            //Console.WriteLine($"\nСоединение {_configEntity.Mail} : {_configEntity.Port} установлено");
-        }
-
-        public void Disconnect()
-        {
-            _client.Disconnect();
-            //Console.WriteLine($"\nСоединение {_configEntity.Mail} : {_configEntity.Port} разорвано");
-        }
-
-        public void GetAllMessages(out List<MailEntity> allMessages, out List<string> allUids)
-        {
-
-            // Get the number of messages in the inbox
-            int messageCount = _client.GetMessageCount();
-
-            // We want to download all messages
-            List<Message> allMessagesOP = new List<Message>(messageCount);
-
-            allMessages = new List<MailEntity>(messageCount);
-            allUids = new List<string>(messageCount);
-
-            // Messages are numbered in the interval: [1, messageCount]
-            // Ergo: message numbers are 1-based.
-            // Most servers give the latest message the highest number
-            for (int i = messageCount; i > 0; i--)
+            using (Pop3Client client = new Pop3Client())
             {
-                allMessagesOP.Add(_client.GetMessage(i));
-                allUids.Add(_client.GetMessageUid(i));
-            }
+                // Connect to the server
+                client.Connect(configEntity.Mail, configEntity.Port, useSsl: true);
+                // Authenticate ourselves towards the server
+                client.Authenticate(configEntity.Login, configEntity.Password);
 
-            allMessages = ConvertMassageToMailEntity(allMessagesOP);
+                // Get the number of messages in the inbox
+                int messageCount = client.GetMessageCount();
+
+                // We want to download all messages
+                List<Message> allMessagesOP = new List<Message>(messageCount);
+
+                allMessages = new List<MailEntity>(messageCount);
+                allUids = new List<string>(messageCount);
+
+                // Messages are numbered in the interval: [1, messageCount]
+                // Ergo: message numbers are 1-based.
+                // Most servers give the latest message the highest number
+                for (int i = messageCount; i > 0; i--)
+                {
+                    allMessagesOP.Add(client.GetMessage(i));
+                    allUids.Add(client.GetMessageUid(i));
+                }
+
+                allMessages = ConvertMassageToMailEntity(allMessagesOP);
+                //client.Disconnect();
+            }                        
         }
 
         private List<MailEntity> ConvertMassageToMailEntity(List<Message> messages)
@@ -101,42 +82,53 @@ namespace MailManager.Monitor
             return mailBody;
         }
 
-        public List<MailEntity> GetUnseenMessages(List<string> seenUids, out List<string> seenUidsNew)
+        public List<MailEntity> GetUnseenMessages(ConfigEntity configEntity, List<string> seenUids, out List<string> seenUidsNew)
         {
-            // Fetch all the current uids seen
-            List<string> uids = _client.GetMessageUids();
-
-            seenUidsNew = seenUids;
-
-            // Create a list we can return with all new messages
-            List<Message> newMessages = new List<Message>();
-
-            // All the new messages not seen by the POP3 client
-            for (int i = 0; i < uids.Count; i++)
+            using (Pop3Client client = new Pop3Client())
             {
-                string currentUidOnServer = uids[i];
-                if (!seenUids.Contains(currentUidOnServer))
+                // Connect to the server
+                client.Connect(configEntity.Mail, configEntity.Port, useSsl: true);
+
+                // Authenticate ourselves towards the server
+                client.Authenticate(configEntity.Login, configEntity.Password);
+
+                // Fetch all the current uids seen
+                List<string> uids = client.GetMessageUids();
+
+                seenUidsNew = seenUids;
+
+                // Create a list we can return with all new messages
+                List<Message> newMessages = new List<Message>();
+
+                // All the new messages not seen by the POP3 client
+                for (int i = 0; i < uids.Count; i++)
                 {
-                    // We have not seen this message before.
-                    // Download it and add this new uid to seen uids
+                    string currentUidOnServer = uids[i];
+                    if (!seenUids.Contains(currentUidOnServer))
+                    {
+                        // We have not seen this message before.
+                        // Download it and add this new uid to seen uids
 
-                    // the uids list is in messageNumber order - meaning that the first
-                    // uid in the list has messageNumber of 1, and the second has 
-                    // messageNumber 2. Therefore we can fetch the message using
-                    // i + 1 since messageNumber should be in range [1, messageCount]
-                    Message unseenMessage = _client.GetMessage(i + 1);
+                        // the uids list is in messageNumber order - meaning that the first
+                        // uid in the list has messageNumber of 1, and the second has 
+                        // messageNumber 2. Therefore we can fetch the message using
+                        // i + 1 since messageNumber should be in range [1, messageCount]
+                        Message unseenMessage = client.GetMessage(i + 1);
 
-                    // Add the message to the new messages
-                    newMessages.Add(unseenMessage);
+                        // Add the message to the new messages
+                        newMessages.Add(unseenMessage);
 
-                    // Add the uid to the seen uids, as it has now been seen
-                    seenUidsNew.Add(currentUidOnServer);
+                        // Add the uid to the seen uids, as it has now been seen
+                        seenUidsNew.Add(currentUidOnServer);
+                    }
                 }
-            }
 
-            // Return our new found messages
-            List<MailEntity> retMessages = ConvertMassageToMailEntity(newMessages);
-            return retMessages;
+                // Return our new found messages
+                List<MailEntity> retMessages = ConvertMassageToMailEntity(newMessages);
+
+                //client.Disconnect();                
+                return retMessages;
+            }  
         }
 
         public void Dispose()
