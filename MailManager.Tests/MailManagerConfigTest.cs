@@ -4,7 +4,6 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Threading;
 using Assert = NUnit.Framework.Assert;
 
 namespace MailManager.Tests
@@ -98,6 +97,17 @@ namespace MailManager.Tests
         {
             var settingsPath = @"Files\MailManagerSettings.txt";
             var configStream = new TxtConfigStream(settingsPath);
+
+            IList<ConfigEntity> confEntityList = configStream.ReadStream();
+
+            Assert.IsNotEmpty(confEntityList);
+        }
+
+        [TestMethod]
+        public void ReadStream_From_AppConfig_ReturnValueIsNotNull()
+        {
+            var settingsPath = @"App.config";
+            var configStream = new AppConfigStream(settingsPath);
 
             IList<ConfigEntity> confEntityList = configStream.ReadStream();
 

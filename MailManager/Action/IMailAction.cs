@@ -5,9 +5,9 @@ namespace MailManager.Action
 {
     public interface IMailAction
     {
-        void ActionSend(ConfigEntity configEntity, MailEntity message, int rowNumber);
-        void ActionCopy(ConfigEntity configEntity, MailEntity message, int rowNumber);
-        void ActionPrint(ConfigEntity configEntity, MailEntity message, int rowNumber);
-        void ActionNotify(ConfigEntity configEntity, MailEntity message, int rowNumber);
+        bool ActionSend(ConfigEntity configEntity, MailEntity message, int rowNumber);
+        bool ActionCopy(ConfigEntity configEntity, MailEntity message, int rowNumber);
+        bool ActionPrint(ConfigEntity configEntity, MailEntity message, int rowNumber);
+        bool ActionNotify(ConfigEntity configEntity, MailEntity message, int rowNumber);
     }
 }

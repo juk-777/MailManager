@@ -29,6 +29,9 @@ namespace MailManager.BL
             Console.WriteLine("\nСчитывание конфигурации ...");
             List<ConfigEntity> configEntityList = await Task.Run(() => _configReader.ReadConfig());
 
+            if (configEntityList == null || configEntityList.Count == 0)
+                throw new ApplicationException("Файл конфигурации пуст!");
+
             Console.WriteLine("\nПроверка конфигурации ...");
             if (! _configReader.VerifyConfig(configEntityList))
                 return;
@@ -36,8 +39,7 @@ namespace MailManager.BL
             if (token.IsCancellationRequested)
                 return;
 
-            if (configEntityList == null || configEntityList.Count == 0)
-                throw new ApplicationException("Файл конфигурации пуст!");
+            
 
             //запускаем мониторинг почты            
             Console.WriteLine("\nЗапускаем мониторинг почты ...");

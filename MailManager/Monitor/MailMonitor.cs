@@ -17,7 +17,7 @@ namespace MailManager.Monitor
         private readonly IMailAction _mailAction;
                 
         private Timer _timer;
-        private List<Timer> _timers = new List<Timer>();
+        public List<Timer> _timers = new List<Timer>();
 
         public MailMonitor(IMailProvider mailProvider, IMailAction mailAction)
         {

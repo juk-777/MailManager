@@ -3,7 +3,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
 using System.Text;
-using System.Threading.Tasks;
 using MailManager.Config;
 using Assert = NUnit.Framework.Assert;
 using MailManager.Monitor;
@@ -70,12 +69,12 @@ namespace MailManager.Tests
             var mockPrint = new Mock<IPrint>();            
 
             var mailAction = new Action.MailAction(mockMailSender.Object, mockMailCopy.Object, mockNotify.Object, mockPrint.Object);
-            mailAction.ActionSendAsync(ConfigEntity, MailEntity, 3);
+            mailAction.ActionSend(ConfigEntity, MailEntity, 3);
             mailAction.ActionCopy(ConfigEntity, MailEntity, 2);
             mailAction.ActionNotify(ConfigEntity, MailEntity, 0);
             mailAction.ActionPrint(ConfigEntity, MailEntity, 1);
 
-            mockMailSender.Verify(x => x.SendAsync(ConfigEntity, MailEntity, 3), Times.Once());
+            mockMailSender.Verify(x => x.SendTo(ConfigEntity, MailEntity, 3), Times.Once());
             mockMailCopy.Verify(x => x.CopyTo(ConfigEntity, MailEntity, 2), Times.Once());
             mockNotify.Verify(x => x.NotifyTo(ConfigEntity, MailEntity, 0), Times.Once());
             mockPrint.Verify(x => x.PrintTo(ConfigEntity, MailEntity, 1), Times.Once());
@@ -83,25 +82,33 @@ namespace MailManager.Tests
         }
 
         [TestMethod]
-        public async Task MailAction_SmtpSender_Verify()
+        public void MailAction_SmtpSender_Verify()
         {
-            var mock = new Mock<ISendWork>();
-            mock.Setup(x => x.DoWork(It.IsAny<ConfigEntity>(), It.IsAny<MailEntity>(), It.IsAny<int>())).Returns(true);
+            var mockMailSender = new Mock<IMailSender>();
+            var mockMailCopy = new Mock<IMailCopy>();
+            var mockNotify = new Mock<INotify>();
+            var mockPrint = new Mock<IPrint>();
 
-            var smtpSender = new SmtpSender(mock.Object);
-            var res = await smtpSender.SendAsync(ConfigEntity, MailEntity, 3);
+            mockMailSender.Setup(x => x.SendTo(It.IsAny<ConfigEntity>(), It.IsAny<MailEntity>(), It.IsAny<int>())).Returns(true);
+
+            var mailAction = new Action.MailAction(mockMailSender.Object, mockMailCopy.Object, mockNotify.Object, mockPrint.Object);
+            var res = mailAction.ActionSend(ConfigEntity, MailEntity, 1);
 
             Assert.That(res, Is.True);
         }
 
         [TestMethod]
         public void MailAction_CopyToFolder_Verify()
-        {
-            var mock = new Mock<ICopyWork>();
-            mock.Setup(x => x.DoWork(It.IsAny<ConfigEntity>(), It.IsAny<MailEntity>(), It.IsAny<int>())).Returns(true);
+        {            
+            var mockMailSender = new Mock<IMailSender>();
+            var mockMailCopy = new Mock<IMailCopy>();
+            var mockNotify = new Mock<INotify>();
+            var mockPrint = new Mock<IPrint>();
 
-            var copyToFolder = new CopyToFolder(mock.Object);
-            var res = copyToFolder.CopyTo(ConfigEntity, MailEntity, 2);
+            mockMailCopy.Setup(x => x.CopyTo(It.IsAny<ConfigEntity>(), It.IsAny<MailEntity>(), It.IsAny<int>())).Returns(true);
+
+            var mailAction = new Action.MailAction(mockMailSender.Object, mockMailCopy.Object, mockNotify.Object, mockPrint.Object);
+            var res = mailAction.ActionCopy(ConfigEntity, MailEntity, 1);            
 
             Assert.That(res, Is.True);
         }
@@ -109,20 +116,31 @@ namespace MailManager.Tests
         [TestMethod]
         public void MailAction_Notify_Verify()
         {
-            var consoleNotify = new ConsoleNotify();
-            var res = consoleNotify.NotifyTo(ConfigEntity, MailEntity, 0);
+            var mockMailSender = new Mock<IMailSender>();
+            var mockMailCopy = new Mock<IMailCopy>();
+            var mockNotify = new Mock<INotify>();
+            var mockPrint = new Mock<IPrint>();
+
+            mockNotify.Setup(x => x.NotifyTo(It.IsAny<ConfigEntity>(), It.IsAny<MailEntity>(), It.IsAny<int>())).Returns(true);
+
+            var mailAction = new Action.MailAction(mockMailSender.Object, mockMailCopy.Object, mockNotify.Object, mockPrint.Object);
+            var res = mailAction.ActionNotify(ConfigEntity, MailEntity, 1);            
 
             Assert.That(res, Is.True);
         }
 
         [TestMethod]
-        public async Task MailAction_PrintDefault_Verify()
+        public void MailAction_PrintDefault_Verify()
         {
-            var mock = new Mock<IPrintWork>();
-            mock.Setup(x => x.DoWork(It.IsAny<StringBuilder>())).Returns(true);           
+            var mockMailSender = new Mock<IMailSender>();
+            var mockMailCopy = new Mock<IMailCopy>();
+            var mockNotify = new Mock<INotify>();
+            var mockPrint = new Mock<IPrint>();
 
-            var print = new PrintDefault(mock.Object);
-            var res = await print.PrintTo(ConfigEntity, MailEntity, 1);
+            mockPrint.Setup(x => x.PrintTo(It.IsAny<ConfigEntity>(), It.IsAny<MailEntity>(), It.IsAny<int>())).Returns(true);           
+
+            var mailAction = new Action.MailAction(mockMailSender.Object, mockMailCopy.Object, mockNotify.Object, mockPrint.Object);
+            var res = mailAction.ActionPrint(ConfigEntity, MailEntity, 1);
 
             Assert.That(res, Is.True);
         }

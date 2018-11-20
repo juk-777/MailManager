@@ -14,9 +14,9 @@ namespace MailManager.Config
         }
         public List<ConfigEntity> ReadConfig()
         {
-            List<ConfigEntity> confEntityList = _configStream.ReadStream();
+            List<ConfigEntity> configEntityList = _configStream.ReadStream();
 
-            return confEntityList;
+            return configEntityList;
         }
 
         public bool VerifyConfig(List<ConfigEntity> configEntityList)

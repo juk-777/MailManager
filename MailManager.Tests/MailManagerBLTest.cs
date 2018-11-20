@@ -91,6 +91,9 @@ namespace MailManager.Tests
             mockConfigReader
                 .Setup(x => x.ReadConfig())
                 .Returns(configEntityList);
+            mockConfigReader
+                .Setup(x => x.VerifyConfig(configEntityList))
+                .Returns(true);
 
             //mockMailMonitor
             //    .Setup(x => x.StartMonitor(It.IsAny<List<ConfigEntity>>()));
