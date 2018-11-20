@@ -10,6 +10,10 @@
         <ActType>Notify</ActType>
         <ActTypeValue></ActTypeValue>
       </MailAction>
+      <MailAction>
+        <ActType>Forward</ActType>
+        <ActTypeValue>juk_777@mail.ru</ActTypeValue>
+      </MailAction>
     </MailActions>
     <IdentityMessages>
       <IdentityMessage>
@@ -43,7 +47,11 @@
       <MailAction>
         <ActType>CopyTo</ActType>
         <ActTypeValue>qw</ActTypeValue>
-      </MailAction>      
+      </MailAction>
+      <MailAction>
+        <ActType>Print</ActType>
+        <ActTypeValue></ActTypeValue>
+      </MailAction>
     </MailActions>
     <IdentityMessages>
       <IdentityMessage>

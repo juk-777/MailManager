@@ -26,12 +26,20 @@ namespace MailManager.Config
             XmlSerializer formatter = new XmlSerializer(typeof(List<ConfigEntity>));
 
             // десериализация
-            using (FileStream fs = new FileStream(SettingsPath, FileMode.OpenOrCreate))
+            try
             {
-                configEntityList = (List<ConfigEntity>)formatter.Deserialize(fs);
-                Console.WriteLine("Объекты десериализованы");
+                using (FileStream fs = new FileStream(SettingsPath, FileMode.OpenOrCreate))
+                {
+                    configEntityList = (List<ConfigEntity>)formatter.Deserialize(fs);
+                    Console.WriteLine("Объекты десериализованы");
+                }
             }
-
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                throw;
+            }
+            
             return configEntityList;
         }
     }
