@@ -21,11 +21,7 @@ namespace MailManager.Config
             Console.WriteLine($"Файл: XML. Путь: {SettingsPath} ...");
 
             List<ConfigEntity> configEntityList = new List<ConfigEntity>();
-
-            // передаем в конструктор тип класса
             XmlSerializer formatter = new XmlSerializer(typeof(List<ConfigEntity>));
-
-            // десериализация
             try
             {
                 using (FileStream fs = new FileStream(SettingsPath, FileMode.OpenOrCreate))

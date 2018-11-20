@@ -36,8 +36,7 @@ namespace MailManager.Monitor
         public void StartMonitorTask(ConfigEntity configEntity)
         {            
             try
-            {
-                //проходим первый раз по всем письмам и запоминаем их Uid                
+            {               
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine($"\nПервый проход по письмам {configEntity.Mail} ...");
                 Console.ForegroundColor = ConsoleColor.Gray;
@@ -57,9 +56,7 @@ namespace MailManager.Monitor
                 Console.WriteLine(e.Message);
             }
 
-            // устанавливаем метод обратного вызова
             TimerCallback tm = new TimerCallback(OtherAccessToMail);
-            // создаем таймер
             _timer = new Timer(tm, configEntity, 0, 10000);
             _timers.Add(_timer);            
         }
@@ -73,7 +70,6 @@ namespace MailManager.Monitor
                 dirInfo.Create();
             }
             string writePath = path + "\\" + configEntity.Mail + "_" + configEntity.Login + "_SeenUids" + ".txt";
-            //Console.WriteLine($"\nЗаписываю данные в файл: {writePath}");
 
             StringBuilder seenUidsStrBuild = new StringBuilder();
             foreach (string su in seenUids)
@@ -103,18 +99,14 @@ namespace MailManager.Monitor
             List<MailEntity> allMessages = new List<MailEntity>();
             List<string> allUids = new List<string>();
 
-            //получаем все письма и их Uid
             _mailProvider.GetAllMessages(configEntity, out allMessages, out allUids);
-
-            //обработка писем
             ProcessingMail(allMessages, configEntity);
 
             return allUids;
         }
 
         public void OtherAccessToMail(object obj)
-        {
-            //последующие проходы с определенным интервалом            
+        {                       
             ConfigEntity configEntity = (ConfigEntity)obj;
 
             try
@@ -141,7 +133,6 @@ namespace MailManager.Monitor
                 if (seenUids != null && seenUids.Count != 0)
                     WriteFileSeenUids(configEntity, seenUids, true);                                
 
-                //обработка писем
                 if (allMessages != null && allMessages.Count != 0)
                     ProcessingMail(allMessages, configEntity);
 
@@ -153,13 +144,11 @@ namespace MailManager.Monitor
         }
 
         public void ProcessingMail(List<MailEntity> messages, ConfigEntity configEntity)
-        {
-            //Console.WriteLine($"\nProcessingMail ...");
+        {            
             foreach (MailEntity mes in messages)
             {                
                 StringBuilder mailTo = new StringBuilder();
                 mailTo = GetMailTo(mes);
-                //List<MessagePart> mpart = mes.FindAllAttachments(); // находим  ВСЕ приаттаченные файлы
 
                 Regex[] regexMas = new Regex[configEntity.IdentityMessages.Length];
                 MatchCollection[] matchesMas = new MatchCollection[configEntity.IdentityMessages.Length];
@@ -202,7 +191,6 @@ namespace MailManager.Monitor
 
                 if (sumKol == configEntity.IdentityMessages.Length)
                 {
-                    //выполнить действия над письмом
                     DoMailActionAsync(configEntity, mes);
                 }
             }            
@@ -242,26 +230,5 @@ namespace MailManager.Monitor
 
             return mailTo;
         }
-
-        #region GetMailBody
-
-        //private StringBuilder GetMailBody(Message message)
-        //{
-        //    StringBuilder mailBody = new StringBuilder();
-
-        //    // ищем первую плейнтекст версию в сообщении
-        //    MessagePart mpPlain = message.FindFirstPlainTextVersion();
-        //    if (mpPlain != null)
-        //    {
-        //        //Encoding enc = mpPlain.BodyEncoding;
-        //        //body = enc.GetString(mpPlain.Body); //  получаем текст сообщения
-        //        mailBody.Append(message.FindFirstPlainTextVersion().GetBodyAsText());
-        //    }
-
-        //    return mailBody;
-        //}
-
-        #endregion
-
     }
 }

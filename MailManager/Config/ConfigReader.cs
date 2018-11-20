@@ -15,16 +15,13 @@ namespace MailManager.Config
         public List<ConfigEntity> ReadConfig()
         {
             List<ConfigEntity> configEntityList = _configStream.ReadStream();
-
             return configEntityList;
         }
 
         public bool VerifyConfig(List<ConfigEntity> configEntityList)
         {
             foreach (ConfigEntity configEntity in configEntityList)
-            {
-                //Console.WriteLine($"Mail: {configEntity.Mail} Port: { configEntity.Port} Login: {configEntity.Login} Password: {configEntity.Password}");
-
+            {                
                 string mailPattern = @"^[pop|imap].\w*.\w*";
                 if (!Regex.IsMatch(configEntity.Mail, mailPattern, RegexOptions.IgnoreCase))
                 {

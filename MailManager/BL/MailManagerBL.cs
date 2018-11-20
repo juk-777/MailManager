@@ -39,16 +39,12 @@ namespace MailManager.BL
             if (token.IsCancellationRequested)
                 return;
 
-            
-
-            //запускаем мониторинг почты            
             Console.WriteLine("\nЗапускаем мониторинг почты ...");
             await Task.Run(()=> _mailMonitor.StartMonitor(configEntityList));
         }
 
         public void StopJob()
-        {
-            //останавливаем мониторинг почты            
+        {          
             Console.WriteLine("\nОстанавливаем мониторинг почты ...");
             _mailMonitor.StopMonitor();
         }

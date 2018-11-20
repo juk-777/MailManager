@@ -57,18 +57,14 @@ namespace MailManager
             #region Инициализация с IoC
             
             container.RegisterType<IConfigReader, ConfigReader>();
-            container.RegisterType<IConfigWriter, ConfigWriter>();
-            //container.RegisterType<IConfigStream, XmlConfigStream>(new InjectionConstructor(new InjectionParameter<string>(configPath)));
+            container.RegisterType<IConfigWriter, ConfigWriter>();            
             container.RegisterType<IMailMonitor, MailMonitor>();
             container.RegisterType<IMailProvider, OpenPopProvider>();
             container.RegisterType<IMailAction, MailAction>();
-
             container.RegisterType<IMailSender, SmtpSender>();
             container.RegisterType<IMailCopy, CopyToFolder>();
             container.RegisterType<INotify, ConsoleNotify>();
-            container.RegisterType<IPrint, PrintDefault>();
-
-            //container.RegisterType<IMailManagerBL, MailManagerBL>(new ContainerControlledLifetimeManager());
+            container.RegisterType<IPrint, PrintDefault>();            
             container.RegisterType<IMailManagerBL, MailManagerBL>();
 
             var mmBL = container.Resolve<IMailManagerBL>();

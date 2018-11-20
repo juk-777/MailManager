@@ -16,15 +16,12 @@ namespace MailManager.Config
         public List<ConfigEntity> ReadStream()
         {
             List<ConfigEntity> configEntityList = new List<ConfigEntity>();
-
-            // Read all the keys from the config file
             NameValueCollection sAll;
             sAll = ConfigurationManager.AppSettings;
 
             ConfigEntity configEntity = new ConfigEntity();
             foreach (string s in sAll.AllKeys)
             {
-                //Console.WriteLine("Key: " + s + " Value: " + sAll.Get(s));
                 if (s=="Mail")
                     configEntity.Mail = sAll.Get(s);
                 if (s == "Port")
