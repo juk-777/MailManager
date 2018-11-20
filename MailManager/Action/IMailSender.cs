@@ -1,6 +1,5 @@
 ﻿using MailManager.Config;
 using MailManager.Monitor;
-using System.Threading.Tasks;
 
 namespace MailManager.Action
 {

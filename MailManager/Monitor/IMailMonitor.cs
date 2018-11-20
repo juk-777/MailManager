@@ -10,6 +10,6 @@ namespace MailManager.Monitor
         List<string> FirstAccessToMail(ConfigEntity configEntity);
         void OtherAccessToMail(object obj);
         void ProcessingMail(List<MailEntity> messages, ConfigEntity configEntity);
-        void DoMailAction(ConfigEntity configEntity, MailEntity message);
+        void DoMailActionAsync(ConfigEntity configEntity, MailEntity message);
     }
 }

@@ -1,6 +1,5 @@
 ﻿using MailManager.Config;
 using MailManager.Monitor;
-using System.Threading.Tasks;
 
 namespace MailManager.Action
 {
@@ -37,7 +36,6 @@ namespace MailManager.Action
         public void ActionNotify(ConfigEntity configEntity, MailEntity message, int rowNumber)
         {
             _notify.NotifyTo(configEntity, message, rowNumber);
-            //await Task.Run(() => _notify.NotifyToAsync(configEntity, message, rowNumber));
         }
          
     }

@@ -95,7 +95,8 @@ namespace MailManager.Monitor
                 // Fetch all the current uids seen
                 List<string> uids = client.GetMessageUids();
 
-                seenUidsNew = seenUids;
+                //seenUidsNew = seenUids;
+                seenUidsNew = new List<string>();
 
                 // Create a list we can return with all new messages
                 List<Message> newMessages = new List<Message>();

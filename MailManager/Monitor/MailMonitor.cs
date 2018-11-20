@@ -29,7 +29,6 @@ namespace MailManager.Monitor
         {
             foreach (ConfigEntity configEntity in configEntityList)
             {
-                //Console.WriteLine($"Mail: {configEntity.Mail} Port: { configEntity.Port} Login: {configEntity.Login} Password: {configEntity.Password}");
                 Task.Run(() => StartMonitorTask(configEntity));
             }
         }
@@ -37,9 +36,12 @@ namespace MailManager.Monitor
         public void StartMonitorTask(ConfigEntity configEntity)
         {            
             try
-            {                
-                //проходим первый раз по всем письмам и запоминаем их Uid
+            {
+                //проходим первый раз по всем письмам и запоминаем их Uid                
+                Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine($"\nПервый проход по письмам {configEntity.Mail} ...");
+                Console.ForegroundColor = ConsoleColor.Gray;
+                
                 List<string> seenUidsTemp = new List<string>();
                 seenUidsTemp = FirstAccessToMail(configEntity);
                 List<string> seenUids = new List<string>();
@@ -48,7 +50,7 @@ namespace MailManager.Monitor
                     seenUids.Add(su);                                              
                 }
 
-                WriteFileSeenUids(configEntity, seenUids);
+                WriteFileSeenUids(configEntity, seenUids, false);
             }
             catch (Exception e)
             {
@@ -62,8 +64,8 @@ namespace MailManager.Monitor
             _timers.Add(_timer);            
         }
 
-        private void WriteFileSeenUids(ConfigEntity configEntity, List<string> seenUids)
-        {
+        private void WriteFileSeenUids(ConfigEntity configEntity, List<string> seenUids, bool addWrite)
+        {            
             string path = @"Files";
             DirectoryInfo dirInfo = new DirectoryInfo(path);
             if (!dirInfo.Exists)
@@ -71,6 +73,7 @@ namespace MailManager.Monitor
                 dirInfo.Create();
             }
             string writePath = path + "\\" + configEntity.Mail + "_" + configEntity.Login + "_SeenUids" + ".txt";
+            //Console.WriteLine($"\nЗаписываю данные в файл: {writePath}");
 
             StringBuilder seenUidsStrBuild = new StringBuilder();
             foreach (string su in seenUids)
@@ -79,9 +82,9 @@ namespace MailManager.Monitor
                 seenUidsStrBuild.AppendLine();
             }
 
-            using (StreamWriter sw = new StreamWriter(writePath, false, System.Text.Encoding.Default))
+            using (StreamWriter sw = new StreamWriter(writePath, addWrite, System.Text.Encoding.Default))
             {
-                sw.WriteLineAsync(seenUidsStrBuild.ToString());
+                sw.WriteLineAsync(seenUidsStrBuild.ToString().Trim());
             }         
         }
 
@@ -115,8 +118,11 @@ namespace MailManager.Monitor
             ConfigEntity configEntity = (ConfigEntity)obj;
 
             try
-            {
+            {                
+                Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine($"\nВторичные проходы по письмам {configEntity.Mail} ...");
+                Console.ForegroundColor = ConsoleColor.Gray;
+                
                 string path = @"Files";                    
                 path += "\\" + configEntity.Mail + "_" + configEntity.Login + "_SeenUids" + ".txt";
                 List<string> seenUids = new List<string>();
@@ -132,10 +138,13 @@ namespace MailManager.Monitor
 
                 List<MailEntity> allMessages = _mailProvider.GetUnseenMessages(configEntity, seenUids, out seenUids);
 
-                WriteFileSeenUids(configEntity, seenUids);
+                if (seenUids != null && seenUids.Count != 0)
+                    WriteFileSeenUids(configEntity, seenUids, true);                                
 
                 //обработка писем
-                ProcessingMail(allMessages, configEntity);
+                if (allMessages != null && allMessages.Count != 0)
+                    ProcessingMail(allMessages, configEntity);
+
             }
             catch (Exception e)
             {
@@ -144,28 +153,13 @@ namespace MailManager.Monitor
         }
 
         public void ProcessingMail(List<MailEntity> messages, ConfigEntity configEntity)
-        {            
+        {
+            //Console.WriteLine($"\nProcessingMail ...");
             foreach (MailEntity mes in messages)
-            {
-                ////List<MessagePart> mpart = mes.FindAllAttachments(); // находим  ВСЕ приаттаченные файлы
-                //StringBuilder mailBody = new StringBuilder();
+            {                
                 StringBuilder mailTo = new StringBuilder();
-
-                //mailBody = GetMailBody(mes);
                 mailTo = GetMailTo(mes);
-
-                #region getMailBoby
-
-                //// ищем первую плейнтекст версию в сообщении
-                //MessagePart mpPlain = mes.FindFirstPlainTextVersion();
-                //if (mpPlain != null)
-                //{
-                //    //Encoding enc = mpPlain.BodyEncoding;
-                //    //body = enc.GetString(mpPlain.Body); //  получаем текст сообщения
-                //    mailBody.Append(mes.FindFirstPlainTextVersion().GetBodyAsText());
-                //}
-
-                #endregion
+                //List<MessagePart> mpart = mes.FindAllAttachments(); // находим  ВСЕ приаттаченные файлы
 
                 Regex[] regexMas = new Regex[configEntity.IdentityMessages.Length];
                 MatchCollection[] matchesMas = new MatchCollection[configEntity.IdentityMessages.Length];
@@ -209,34 +203,30 @@ namespace MailManager.Monitor
                 if (sumKol == configEntity.IdentityMessages.Length)
                 {
                     //выполнить действия над письмом
-                    DoMailAction(configEntity, mes);
+                    DoMailActionAsync(configEntity, mes);
                 }
             }            
         }
 
-        public async void DoMailAction(ConfigEntity configEntity, MailEntity message)
+        public async void DoMailActionAsync(ConfigEntity configEntity, MailEntity message)
         {            
             for (int i = 0; i < configEntity.MailActions.Length; i++)
             {
                 switch (configEntity.MailActions[i].ActType)
                 {
-                    case ActionType.Notify:
-                        //_mailAction.ActionNotify(configEntity, message, i);
+                    case ActionType.Notify:                        
                         await Task.Run(() => _mailAction.ActionNotify(configEntity, message, i));
                         break;
 
                     case ActionType.CopyTo:                            
-                        //_mailAction.ActionCopy(configEntity, message, i);
                         await Task.Run(() => _mailAction.ActionCopy(configEntity, message, i));
                         break;
 
                     case ActionType.Forward:
-                        //_mailAction.ActionSend(configEntity, message, i);
                         await Task.Run(() => _mailAction.ActionSend(configEntity, message, i));
                         break;
 
                     case ActionType.Print:                            
-                        //_mailAction.ActionPrint(configEntity, message, i);
                         await Task.Run(() => _mailAction.ActionPrint(configEntity, message, i));
                         break;
                 }

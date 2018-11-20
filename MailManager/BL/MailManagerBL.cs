@@ -25,11 +25,13 @@ namespace MailManager.BL
             //IConfigWriter configWriter = new ConfigWriter();
             //configWriter.WriteConfig();
             #endregion
-
-            //считывание конфигурации
+            
             Console.WriteLine("\nСчитывание конфигурации ...");
-            List<ConfigEntity> configEntityList = await Task.Run(() => _configReader.ReadConfig()); // _configReader.ReadConfig();            
-            //Thread.Sleep(3000);
+            List<ConfigEntity> configEntityList = await Task.Run(() => _configReader.ReadConfig());
+
+            Console.WriteLine("\nПроверка конфигурации ...");
+            if (! _configReader.VerifyConfig(configEntityList))
+                return;
 
             if (token.IsCancellationRequested)
                 return;
@@ -40,8 +42,6 @@ namespace MailManager.BL
             //запускаем мониторинг почты            
             Console.WriteLine("\nЗапускаем мониторинг почты ...");
             await Task.Run(()=> _mailMonitor.StartMonitor(configEntityList));
-
-            
         }
 
         public void StopJob()

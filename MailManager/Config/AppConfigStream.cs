@@ -144,7 +144,6 @@ namespace MailManager.Config
 
                 #endregion
 
-
             }
 
             configEntityList.Add(configEntity);
