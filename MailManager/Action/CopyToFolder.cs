@@ -9,11 +9,10 @@ namespace MailManager.Action
     public class CopyToFolder : IMailCopy
     {        
         public bool CopyTo(ConfigEntity configEntity, MailEntity message, int rowNumber)
-        {
-            ConsoleColor color = Console.ForegroundColor;
+        {            
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine($"\nCopyToFolder: {configEntity.MailActions[rowNumber].ActTypeValue}");
-            Console.ForegroundColor = color;            
+            Console.ForegroundColor = ConsoleColor.Gray;            
 
             string path = @"Files";
             string subpath = configEntity.MailActions[rowNumber].ActTypeValue;

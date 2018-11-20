@@ -12,11 +12,10 @@ namespace MailManager.Action
         public StringBuilder MailResult { get; set; }        
 
         public bool PrintTo(ConfigEntity configEntity, MailEntity message, int rowNumber)
-        {
-            ConsoleColor color = Console.ForegroundColor;
+        {            
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine($"\nPrint ...");
-            Console.ForegroundColor = color;            
+            Console.ForegroundColor = ConsoleColor.Gray;            
 
             MailResult = new StringBuilder();
             MailResult.Append("To:      " + MailMonitor.GetMailTo(message));

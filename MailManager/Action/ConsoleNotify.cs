@@ -8,11 +8,10 @@ namespace MailManager.Action
     public class ConsoleNotify : INotify
     {
         public bool NotifyTo(ConfigEntity configEntity, MailEntity message, int rowNumber)
-        {
-            ConsoleColor color = Console.ForegroundColor;
+        {            
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine($"\nNotify ...");
-            Console.ForegroundColor = color;            
+            Console.ForegroundColor = ConsoleColor.Gray;            
 
             StringBuilder mailTo = new StringBuilder();
             mailTo = MailMonitor.GetMailTo(message);

@@ -16,11 +16,10 @@ namespace MailManager.Action
                 Console.WriteLine("Почтовый ящик не указан!");
                 return false;                                
             }
-
-            ConsoleColor color = Console.ForegroundColor;
+                        
             Console.ForegroundColor = ConsoleColor.Cyan;            
             Console.WriteLine($"\nForward: {configEntity.MailActions[rowNumber].ActTypeValue}");
-            Console.ForegroundColor = color;
+            Console.ForegroundColor = ConsoleColor.Gray;
 
             StringBuilder mailFrom = new StringBuilder();
             mailFrom.Append(configEntity.Mail);
