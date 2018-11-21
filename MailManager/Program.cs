@@ -89,7 +89,6 @@ namespace MailManager
                 Console.ReadLine();
                 cts.Cancel();
 
-                mmBL.StopJob();
                 Console.WriteLine("\nЗавершение работы ...");
             }
             catch (Exception e)
@@ -99,6 +98,7 @@ namespace MailManager
             finally
             {
                 container.Dispose();
+                mmBL.Dispose();
             }            
 
             Console.WriteLine("\nДо скорой встречи в MailManager ...");

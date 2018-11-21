@@ -84,16 +84,6 @@ namespace MailManager.Monitor
             }         
         }
 
-        public void StopMonitor()
-        {
-            foreach (Timer timer in _timers)
-            {
-                timer.Dispose();
-            }
-
-            _mailProvider?.Dispose();
-        }
-
         public List<string> FirstAccessToMail(ConfigEntity configEntity)
         {            
             List<MailEntity> allMessages = new List<MailEntity>();
@@ -229,5 +219,31 @@ namespace MailManager.Monitor
 
             return mailTo;
         }
+
+        #region IDisposable
+        private bool disposedValue = false; // Для определения избыточных вызовов
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    //Console.WriteLine("\nОстанавливаем таймеры ...");
+                    foreach (Timer timer in _timers)
+                    {
+                        timer.Dispose();
+                    }                                     
+                }
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        #endregion
     }
 }

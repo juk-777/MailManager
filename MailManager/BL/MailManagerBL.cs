@@ -43,10 +43,27 @@ namespace MailManager.BL
             await Task.Run(()=> _mailMonitor.StartMonitor(configEntityList));
         }
 
-        public void StopJob()
-        {          
-            Console.WriteLine("\nОстанавливаем мониторинг почты ...");
-            _mailMonitor.StopMonitor();
+        #region IDisposable
+        private bool disposedValue = false; // Для определения избыточных вызовов
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    //Console.WriteLine("\nОстанавливаем мониторинг почты ...");
+                    _mailMonitor.Dispose();
+                }
+                disposedValue = true;
+            }
         }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        #endregion
     }
 }

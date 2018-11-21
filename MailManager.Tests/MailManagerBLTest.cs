@@ -104,16 +104,16 @@ namespace MailManager.Tests
             mockMailMonitor.Verify(x => x.StartMonitor(It.IsAny<List<ConfigEntity>>()), Times.Once());
         }
 
-        [TestMethod]
-        public void StopJob_StopMonitor_WasCalled()
-        {
-            var mockConfigReader = new Mock<IConfigReader>();
-            var mockMailMonitor = new Mock<IMailMonitor>();
+        //[TestMethod]
+        //public void StopJob_StopMonitor_WasCalled()
+        //{
+        //    var mockConfigReader = new Mock<IConfigReader>();
+        //    var mockMailMonitor = new Mock<IMailMonitor>();
 
-            var mmBL = new MailManagerBL(mockConfigReader.Object, mockMailMonitor.Object);
-            mmBL.StopJob();
+        //    var mmBL = new MailManagerBL(mockConfigReader.Object, mockMailMonitor.Object);
+        //    mmBL.StopJob();
 
-            mockMailMonitor.Verify(x => x.StopMonitor(), Times.Once());
-        }
+        //    mockMailMonitor.Verify(x => x.StopMonitor(), Times.Once());
+        //}
     }
 }

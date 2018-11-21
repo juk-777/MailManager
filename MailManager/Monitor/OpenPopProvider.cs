@@ -10,8 +10,6 @@ namespace MailManager.Monitor
 {
     public class OpenPopProvider : IMailProvider
     {
-        private bool _disposed = false;
-
         public void GetAllMessages(ConfigEntity configEntity, out List<MailEntity> allMessages, out List<string> allUids)
         {
             using (Pop3Client client = new Pop3Client())
@@ -94,26 +92,6 @@ namespace MailManager.Monitor
                 List<MailEntity> retMessages = ConvertMassageToMailEntity(newMessages);                
                 return retMessages;
             }  
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposed)
-            {
-                if (disposing){}
-                _disposed = true;
-            }
-        }        
-
-        ~OpenPopProvider()
-        {
-            Dispose(false);
-        }        
+        }              
     }
 }

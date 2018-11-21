@@ -46,31 +46,31 @@ namespace MailManager.Tests
             mockMailAction.VerifyAll();
         }
 
-        [TestMethod]
-        public void MailMonitor_StoptMonitor_Verify()
-        {
-            var mockMailProvider = new Mock<IMailProvider>();
-            var mockMailAction = new Mock<IMailAction>();
-            var mockTimer = new Mock<IDisposable>();
+        //[TestMethod]
+        //public void MailMonitor_StoptMonitor_Verify()
+        //{
+        //    var mockMailProvider = new Mock<IMailProvider>();
+        //    var mockMailAction = new Mock<IMailAction>();
+        //    var mockTimer = new Mock<IDisposable>();
 
-            mockTimer
-                .Setup(x => x.Dispose());
-            //void Func() => mm.StopMonitor();
+        //    mockTimer
+        //        .Setup(x => x.Dispose());
+        //    //void Func() => mm.StopMonitor();
 
-            var mm = new MailMonitor(mockMailProvider.Object, mockMailAction.Object);
-            var t = mockTimer.Object;
+        //    var mm = new MailMonitor(mockMailProvider.Object, mockMailAction.Object);
+        //    var t = mockTimer.Object;
 
-            // устанавливаем метод обратного вызова
-            TimerCallback tm = new TimerCallback(mm.OtherAccessToMail);
-            // создаем таймер
-            Timer timer = new Timer(tm, new ConfigEntity(), 0, 1000);
-            mm._timers.Add(timer);
+        //    // устанавливаем метод обратного вызова
+        //    TimerCallback tm = new TimerCallback(mm.OtherAccessToMail);
+        //    // создаем таймер
+        //    Timer timer = new Timer(tm, new ConfigEntity(), 0, 1000);
+        //    mm._timers.Add(timer);
 
-            mm.StopMonitor();
+        //    mm.StopMonitor();
 
-            mockTimer.Verify();
+        //    mockTimer.Verify();
 
-        }
+        //}
 
         [TestMethod]
         public void MailMonitor_StartMonitor_Verify()

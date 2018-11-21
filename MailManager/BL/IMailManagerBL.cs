@@ -1,11 +1,11 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MailManager.BL
 {
-    public interface IMailManagerBL
+    public interface IMailManagerBL : IDisposable
     {
         Task StartJob(CancellationToken token);
-        void StopJob();
     }
 }
