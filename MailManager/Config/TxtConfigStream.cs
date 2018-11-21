@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace MailManager.Config
 {
@@ -16,7 +17,7 @@ namespace MailManager.Config
             if (SettingsPath == null)
                 throw new ApplicationException("Не указан путь к файлу конфигурации!");
             
-            Console.WriteLine($"Файл: TXT. Путь: {SettingsPath} ...");
+            Console.WriteLine($"Файл: {Path.GetExtension(SettingsPath)}. Путь: {SettingsPath} ...");
 
             ConfigEntity configEntity1 = new ConfigEntity();
             configEntity1.MailActions = new MailAction[] { new MailAction { ActType = ActionType.Notify, ActTypeValue = "yes" }, new MailAction { ActType = ActionType.Forward, ActTypeValue = "juk_777@mail.ru" } };

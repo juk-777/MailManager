@@ -68,8 +68,8 @@ namespace MailManager.Monitor
             if (!dirInfo.Exists)
             {
                 dirInfo.Create();
-            }
-            string writePath = path + "\\" + configEntity.Mail + "_" + configEntity.Login + "_SeenUids" + ".txt";
+            }            
+            string writePath = Path.Combine(path, configEntity.Mail + "_" + configEntity.Login + "_SeenUids" + ".txt");
 
             StringBuilder seenUidsStrBuild = new StringBuilder();
             foreach (string su in seenUids)
@@ -78,7 +78,7 @@ namespace MailManager.Monitor
                 seenUidsStrBuild.AppendLine();
             }
 
-            using (StreamWriter sw = new StreamWriter(writePath, addWrite, System.Text.Encoding.Default))
+            using (StreamWriter sw = new StreamWriter(writePath, addWrite, Encoding.Default))
             {
                 sw.WriteLineAsync(seenUidsStrBuild.ToString().Trim());
             }         
@@ -114,12 +114,11 @@ namespace MailManager.Monitor
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine($"\nВторичные проходы по письмам {configEntity.Mail} ...");
                 Console.ForegroundColor = ConsoleColor.Gray;
-                
-                string path = @"Files";                    
-                path += "\\" + configEntity.Mail + "_" + configEntity.Login + "_SeenUids" + ".txt";
+                                
+                string path = Path.Combine(@"Files", configEntity.Mail + "_" + configEntity.Login + "_SeenUids" + ".txt");
                 List<string> seenUids = new List<string>();
 
-                using (StreamReader sr = new StreamReader(path, System.Text.Encoding.Default))
+                using (StreamReader sr = new StreamReader(path, Encoding.Default))
                 {
                     string line;
                     while ((line = sr.ReadLine()) != null)

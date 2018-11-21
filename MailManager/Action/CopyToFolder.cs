@@ -26,7 +26,7 @@ namespace MailManager.Action
             else
                 dirInfo.CreateSubdirectory(subpath);
 
-            string writePath = path + "\\" + subpath + "\\" + configEntity.Mail + " " + message.DateSent.ToString("d") + ".txt";
+            string writePath = Path.Combine(path, subpath, configEntity.Mail + " " + message.DateSent.ToString("d") + ".txt");
 
             StringBuilder mailResult = new StringBuilder();
             mailResult.Append("To:      " + MailMonitor.GetMailTo(message));
@@ -37,7 +37,7 @@ namespace MailManager.Action
             mailResult.AppendLine();
             mailResult.Append("Body:    " + message.Body);
 
-            using (StreamWriter sw = new StreamWriter(writePath, false, System.Text.Encoding.Default))
+            using (StreamWriter sw = new StreamWriter(writePath, false, Encoding.Default))
             {
                 sw.WriteLineAsync(mailResult.ToString());
             }

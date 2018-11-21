@@ -32,7 +32,7 @@ namespace MailManager.Config
             Console.WriteLine("Объекты созданы");
 
             XmlSerializer formatter = new XmlSerializer(typeof(List<ConfigEntity>));
-            using (FileStream fs = new FileStream(@"Files\MailManagerSettings.xml", FileMode.OpenOrCreate))
+            using (FileStream fs = new FileStream(Path.Combine(@"Files", @"GeneratedSettings.xml"), FileMode.OpenOrCreate))
             {
                 formatter.Serialize(fs, configEntityList);
                 Console.WriteLine("Объекты сериализованы");

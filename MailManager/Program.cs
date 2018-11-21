@@ -27,21 +27,21 @@ namespace MailManager
             {
                 case 1:
                     Console.WriteLine("Считываю конфигурацию из файла App.config");
-                    configPath = @"App.config";
+                    configPath = Path.Combine(@"App.config");
                     container.RegisterType<IConfigStream, AppConfigStream>(new InjectionConstructor(new InjectionParameter<string>(configPath)));
                     break;
-                case 0:
-                    string fileExtension;
-                    GetFile(out configPath, out fileExtension);
-                    if (fileExtension == "xml")
+                case 0:                    
+                    configPath = GetFile();
+                    string fileExtension = Path.GetExtension(configPath);
+                    if (fileExtension == ".xml")
                         container.RegisterType<IConfigStream, XmlConfigStream>(new InjectionConstructor(new InjectionParameter<string>(configPath)));
-                    else if (fileExtension == "txt")
+                    else if (fileExtension == ".txt")
                         container.RegisterType<IConfigStream, TxtConfigStream>(new InjectionConstructor(new InjectionParameter<string>(configPath)));
                     else throw new ApplicationException("Неподдерживаемый формат файла!");
                     break;
                 default:                    
                     Console.WriteLine("Ошибочный ввод. \nСчитываю конфигурацию из файла App.config");
-                    configPath = @"App.config";
+                    configPath = Path.Combine(@"App.config");
                     container.RegisterType<IConfigStream, AppConfigStream>(new InjectionConstructor(new InjectionParameter<string>(configPath)));
                     break;
             }            
@@ -105,9 +105,10 @@ namespace MailManager
             Console.ReadLine();
         }
 
-        private static void GetFile(out string configPath, out string fileExtension)
-        {
-            configPath = @"Files\MailManagerSettings.xml";
+        private static string GetFile()
+        {            
+            string configPath = Path.Combine(@"Files", @"MailManagerSettings.xml");
+            string fileExtension;
             Console.WriteLine("--------------------");
             Console.WriteLine($"Введите '1' для того, чтобы считать конфигурацию из предварительно подготовленного XML файла \n{configPath}");
             Console.WriteLine("\nЛибо введите любой другой путь к файлу конфигурации.");
@@ -116,9 +117,9 @@ namespace MailManager
             switch (configPath)
             {
                 case "1":
-                    configPath = @"Files\MailManagerSettings.xml";
-                    fileExtension = "xml";
-                    Console.WriteLine($"Файл: XML. Путь: {configPath}");
+                    configPath = Path.Combine(@"Files", @"MailManagerSettings.xml");
+                    fileExtension = Path.GetExtension(configPath);
+                    Console.WriteLine($"Файл: {fileExtension}. Путь: {configPath}");
                     break;
                 default:
                     if (!string.IsNullOrEmpty(configPath))
@@ -126,7 +127,8 @@ namespace MailManager
                         FileInfo fileInf = new FileInfo(configPath);
                         if (fileInf.Exists)
                         {
-                            fileExtension = fileInf.Name.Substring(fileInf.Name.LastIndexOf(".", StringComparison.Ordinal) + 1);
+                            //fileExtension = fileInf.Name.Substring(fileInf.Name.LastIndexOf(".", StringComparison.Ordinal) + 1);
+                            fileExtension = Path.GetExtension(configPath);
                             Console.WriteLine($"Файл: {fileExtension}. Путь: {configPath}");
                         }
                         else throw new ApplicationException("Ошибка при указании пути к файлу конфигурации!");                        
@@ -134,7 +136,9 @@ namespace MailManager
                     else throw new ApplicationException("Ошибка при указании пути к файлу конфигурации!");                    
 
                     break;
-            }            
+            }
+
+            return configPath;
         }
     }
 }
