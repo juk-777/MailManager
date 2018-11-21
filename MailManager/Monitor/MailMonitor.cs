@@ -86,13 +86,19 @@ namespace MailManager.Monitor
 
         public List<string> FirstAccessToMail(ConfigEntity configEntity)
         {            
-            List<MailEntity> allMessages = new List<MailEntity>();
-            List<string> allUids = new List<string>();
+            try
+            {
+                var mailTransfer = _mailProvider.GetAllMessages(configEntity);
+                ProcessingMail(mailTransfer.MailEntities, configEntity);
 
-            _mailProvider.GetAllMessages(configEntity, out allMessages, out allUids);
-            ProcessingMail(allMessages, configEntity);
-
-            return allUids;
+                return mailTransfer.Uids;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                throw;
+            }
+            
         }
 
         public void OtherAccessToMail(object obj)
@@ -117,13 +123,13 @@ namespace MailManager.Monitor
                     }
                 }
 
-                List<MailEntity> allMessages = _mailProvider.GetUnseenMessages(configEntity, seenUids, out seenUids);
+                var mailTransfer = _mailProvider.GetUnseenMessages(configEntity, seenUids);
 
-                if (seenUids != null && seenUids.Count != 0)
-                    WriteFileSeenUids(configEntity, seenUids, true);                                
+                if (mailTransfer.Uids != null && mailTransfer.Uids.Count != 0)
+                    WriteFileSeenUids(configEntity, mailTransfer.Uids, true);                                
 
-                if (allMessages != null && allMessages.Count != 0)
-                    ProcessingMail(allMessages, configEntity);
+                if (mailTransfer.MailEntities != null && mailTransfer.MailEntities.Count != 0)
+                    ProcessingMail(mailTransfer.MailEntities, configEntity);
 
             }
             catch (Exception e)
@@ -221,7 +227,7 @@ namespace MailManager.Monitor
         }
 
         #region IDisposable
-        private bool disposedValue = false; // Для определения избыточных вызовов
+        private bool disposedValue = false;
 
         protected virtual void Dispose(bool disposing)
         {

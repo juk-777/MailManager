@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text;
 using MailManager.Config;
 using OpenPop.Mime;
@@ -10,7 +9,7 @@ namespace MailManager.Monitor
 {
     public class OpenPopProvider : IMailProvider
     {
-        public void GetAllMessages(ConfigEntity configEntity, out List<MailEntity> allMessages, out List<string> allUids)
+        public MailTransfer GetAllMessages(ConfigEntity configEntity)
         {
             using (Pop3Client client = new Pop3Client())
             {
@@ -20,16 +19,16 @@ namespace MailManager.Monitor
                 int messageCount = client.GetMessageCount();
                 List<Message> allMessagesOP = new List<Message>(messageCount);
 
-                allMessages = new List<MailEntity>(messageCount);
-                allUids = new List<string>(messageCount);
+                var mailTransfer = new MailTransfer();
 
                 for (int i = messageCount; i > 0; i--)
                 {
                     allMessagesOP.Add(client.GetMessage(i));
-                    allUids.Add(client.GetMessageUid(i));
+                    mailTransfer.Uids.Add(client.GetMessageUid(i));
                 }
 
-                allMessages = ConvertMassageToMailEntity(allMessagesOP);
+                mailTransfer.MailEntities = ConvertMassageToMailEntity(allMessagesOP);
+                return mailTransfer;
             }                        
         }
 
@@ -67,15 +66,15 @@ namespace MailManager.Monitor
             return mailBody;
         }
 
-        public List<MailEntity> GetUnseenMessages(ConfigEntity configEntity, List<string> seenUids, out List<string> seenUidsNew)
+        public MailTransfer GetUnseenMessages(ConfigEntity configEntity, List<string> seenUids)
         {
             using (Pop3Client client = new Pop3Client())
             {
                 client.Connect(configEntity.Mail, configEntity.Port, useSsl: true);
                 client.Authenticate(configEntity.Login, configEntity.Password);
 
+                var mailTransfer = new MailTransfer();
                 List<string> uids = client.GetMessageUids();
-                seenUidsNew = new List<string>();
                 List<Message> newMessages = new List<Message>();
 
                 for (int i = 0; i < uids.Count; i++)
@@ -85,12 +84,12 @@ namespace MailManager.Monitor
                     {
                         Message unseenMessage = client.GetMessage(i + 1);
                         newMessages.Add(unseenMessage);
-                        seenUidsNew.Add(currentUidOnServer);
+                        mailTransfer.Uids.Add(currentUidOnServer);
                     }
                 }
 
-                List<MailEntity> retMessages = ConvertMassageToMailEntity(newMessages);                
-                return retMessages;
+                mailTransfer.MailEntities = ConvertMassageToMailEntity(newMessages);
+                return mailTransfer;
             }  
         }              
     }

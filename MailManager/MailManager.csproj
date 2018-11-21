@@ -107,6 +107,7 @@
     <Compile Include="Action\MailAction.cs" />
     <Compile Include="Monitor\MailEntity.cs" />
     <Compile Include="Monitor\MailMonitor.cs" />
+    <Compile Include="Monitor\MailTransfer.cs" />
     <Compile Include="Monitor\OpenPopProvider.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
