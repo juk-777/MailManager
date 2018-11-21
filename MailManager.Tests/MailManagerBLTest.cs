@@ -38,12 +38,11 @@ namespace MailManager.Tests
             var mockMailMonitor = new Mock<IMailMonitor>();
 
             mockConfigReader
-                .Setup(x => x.ReadConfig())              // при вызове метода ReadConfig 
-                .Returns<List<ConfigEntity>>(null);     // должно возвращаться значение null
+                .Setup(x => x.ReadConfig())
+                .Returns<List<ConfigEntity>>(null);
 
             var mmBL = new MailManagerBL(mockConfigReader.Object, mockMailMonitor.Object);
 
-            // тест закончится успешно только в том случае если будет выброшено исключение типа ApplicationException
             Assert.ThrowsAsync<ApplicationException>(() => mmBL.StartJob(Token));
         }
 
@@ -59,7 +58,6 @@ namespace MailManager.Tests
 
             var mmBL = new MailManagerBL(mockConfigReader.Object, mockMailMonitor.Object);
 
-            // тест закончится успешно только в том случае если будет выброшено исключение типа ApplicationException
             Assert.ThrowsAsync<ApplicationException>(() => mmBL.StartJob(Token));
         }
 
@@ -95,14 +93,13 @@ namespace MailManager.Tests
                 .Setup(x => x.VerifyConfig(configEntityList))
                 .Returns(true);
 
-            //mockMailMonitor
-            //    .Setup(x => x.StartMonitor(It.IsAny<List<ConfigEntity>>()));
-
             var mmBL = new MailManagerBL(mockConfigReader.Object, mockMailMonitor.Object);
             mmBL.StartJob(Token);
 
             mockMailMonitor.Verify(x => x.StartMonitor(It.IsAny<List<ConfigEntity>>()), Times.Once());
         }
+
+        #region StopMonitor
 
         //[TestMethod]
         //public void StopJob_StopMonitor_WasCalled()
@@ -115,5 +112,8 @@ namespace MailManager.Tests
 
         //    mockMailMonitor.Verify(x => x.StopMonitor(), Times.Once());
         //}
+
+        #endregion
+
     }
 }

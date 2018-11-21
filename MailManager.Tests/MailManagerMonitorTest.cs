@@ -68,15 +68,72 @@ namespace MailManager.Tests
             var mm = new MailMonitor(mockMailProvider.Object, mockMailAction.Object);
             mm.StartMonitorTask(new ConfigEntity());
 
-            //List<MailEntity> allMessages = new List<MailEntity>();
-            //List<string> allUids = new List<string>();
-
             mockMailProvider.Verify(x => x.GetAllMessages(It.IsAny<ConfigEntity>()), Times.AtLeastOnce);
             //mockMailProvider.Verify(x => x.GetUnseenMessages(It.IsAny<ConfigEntity>(), allUids, out allUids), Times.AtLeastOnce);            
             //mockMailProvider.Verify(x => x.Dispose(), Times.AtLeastOnce);
 
             mockMailAction.VerifyAll();
         }
+
+        [TestMethod]
+        public void MailMonitor_StartMonitor_Verify()
+        {
+            var mockMailProvider = new Mock<IMailProvider>();
+            var mockMailAction = new Mock<IMailAction>();            
+
+            List<ConfigEntity> configEntities = new List<ConfigEntity>();
+            configEntities.Add(ConfigEntity);
+
+            var mm = new MailMonitor(mockMailProvider.Object, mockMailAction.Object);
+
+            mm.StartMonitor(configEntities);
+
+            mockMailProvider.VerifyAll();
+            mockMailAction.VerifyAll();
+        }
+
+        [TestMethod]
+        public void MailMonitor_FirstAccessToMail_GetAllMessages_WasCalled()
+        {
+            var mockMailProvider = new Mock<IMailProvider>();
+            var mockMailAction = new Mock<IMailAction>();
+
+            var mailTransfer = new MailTransfer();
+            mailTransfer.MailEntities.Add(MailEntity);
+            mailTransfer.Uids.Add("12345678");
+
+            mockMailProvider
+                .Setup(x => x.GetAllMessages(ConfigEntity))
+                .Returns(mailTransfer);
+
+            var mm = new MailMonitor(mockMailProvider.Object, mockMailAction.Object);
+            mm.FirstAccessToMail(ConfigEntity);
+
+            mockMailProvider.Verify(x => x.GetAllMessages(ConfigEntity), Times.AtLeastOnce);
+        }
+
+        [TestMethod]
+        public void MailMonitor_ProcessingMail_Verify()
+        {
+            var mockMailProvider = new Mock<IMailProvider>();
+            var mockMailAction = new Mock<IMailAction>();            
+
+            List<MailEntity> allMessages = new List<MailEntity>();
+            allMessages.Add(MailEntity);
+            List<string> allUids = new List<string>();
+
+            mockMailProvider
+                .Setup(x => x.GetAllMessages(It.IsAny<ConfigEntity>()))
+                .Returns(It.IsAny<MailTransfer>());
+
+            var mm = new MailMonitor(mockMailProvider.Object, mockMailAction.Object);
+            mm.ProcessingMail(allMessages, ConfigEntity);
+
+            mockMailProvider.Verify();
+            mockMailAction.VerifyAll();
+        }
+
+        #region StoptMonitor
 
         //[TestMethod]
         //public void MailMonitor_StoptMonitor_Verify()
@@ -104,68 +161,6 @@ namespace MailManager.Tests
 
         //}
 
-        [TestMethod]
-        public void MailMonitor_StartMonitor_Verify()
-        {
-            var mockMailProvider = new Mock<IMailProvider>();
-            var mockMailAction = new Mock<IMailAction>();            
-
-            List<ConfigEntity> configEntities = new List<ConfigEntity>();
-            configEntities.Add(ConfigEntity);
-
-            var mm = new MailMonitor(mockMailProvider.Object, mockMailAction.Object);
-
-            mm.StartMonitor(configEntities);
-
-            mockMailProvider.VerifyAll();
-            mockMailAction.VerifyAll();
-
-        }
-
-        [TestMethod]
-        public void MailMonitor_FirstAccessToMail_GetAllMessages_WasCalled()
-        {
-            var mockMailProvider = new Mock<IMailProvider>();
-            var mockMailAction = new Mock<IMailAction>();
-
-            //List<MailEntity> allMessages = new List<MailEntity>();
-            //List<string> allUids = new List<string>();
-
-            var mailTransfer = new MailTransfer();
-            mailTransfer.MailEntities.Add(MailEntity);
-            mailTransfer.Uids.Add("12345678");
-
-            mockMailProvider
-                .Setup(x => x.GetAllMessages(ConfigEntity))
-                .Returns(mailTransfer);
-
-            var mm = new MailMonitor(mockMailProvider.Object, mockMailAction.Object);
-            mm.FirstAccessToMail(ConfigEntity);
-
-            mockMailProvider.Verify(x => x.GetAllMessages(ConfigEntity), Times.AtLeastOnce);
-
-        }
-
-        [TestMethod]
-        public void MailMonitor_ProcessingMail_Verify()
-        {
-            var mockMailProvider = new Mock<IMailProvider>();
-            var mockMailAction = new Mock<IMailAction>();            
-
-            List<MailEntity> allMessages = new List<MailEntity>();
-            allMessages.Add(MailEntity);
-            List<string> allUids = new List<string>();
-
-            mockMailProvider
-                .Setup(x => x.GetAllMessages(It.IsAny<ConfigEntity>()))
-                .Returns(It.IsAny<MailTransfer>());
-
-            var mm = new MailMonitor(mockMailProvider.Object, mockMailAction.Object);
-            mm.ProcessingMail(allMessages, ConfigEntity);
-
-            mockMailProvider.Verify();
-            mockMailAction.VerifyAll();
-
-        }
+        #endregion
     }
 }

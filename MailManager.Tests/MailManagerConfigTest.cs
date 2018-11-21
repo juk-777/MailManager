@@ -43,8 +43,6 @@ namespace MailManager.Tests
         public void ReadStream_From_XML_SettingsPathIsNull_ExceptionThrown()
         {
             var configStream = new XmlConfigStream(null);
-
-            //  тест закончится успешно только в том случае если будет выброшено исключение типа ApplicationException
             Assert.Throws<ApplicationException>(() => configStream.ReadStream());
         }
 
@@ -87,8 +85,6 @@ namespace MailManager.Tests
         public void ReadStream_From_TXT_SettingsPathIsNull_ExceptionThrown()
         {
             var configStream = new TxtConfigStream(null);
-
-            // тест закончится успешно только в том случае если будет выброшено исключение типа ApplicationException
             Assert.Throws<ApplicationException>(() => configStream.ReadStream());
         }
 

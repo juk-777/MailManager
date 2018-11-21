@@ -78,7 +78,6 @@ namespace MailManager.Tests
             mockMailCopy.Verify(x => x.CopyTo(ConfigEntity, MailEntity, 2), Times.Once());
             mockNotify.Verify(x => x.NotifyTo(ConfigEntity, MailEntity, 0), Times.Once());
             mockPrint.Verify(x => x.PrintTo(ConfigEntity, MailEntity, 1), Times.Once());
-
         }
 
         [TestMethod]
