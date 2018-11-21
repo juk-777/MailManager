@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using System.Net.Mail;
 using MailManager.Action;
 using System.IO;
+using System.Linq;
 
 namespace MailManager.Monitor
 {
@@ -42,14 +43,10 @@ namespace MailManager.Monitor
                 Console.ForegroundColor = ConsoleColor.Gray;
                 
                 List<string> seenUidsTemp = new List<string>();
-                seenUidsTemp = FirstAccessToMail(configEntity);
-                List<string> seenUids = new List<string>();
-                foreach (string su in seenUidsTemp)
-                {
-                    seenUids.Add(su);                                              
-                }
+                seenUidsTemp = FirstAccessToMail(configEntity);               
 
-                WriteFileSeenUids(configEntity, seenUids, false);
+                var seenUids = from s in seenUidsTemp select s;
+                WriteFileSeenUids(configEntity, seenUids.ToList(), false);
             }
             catch (Exception e)
             {

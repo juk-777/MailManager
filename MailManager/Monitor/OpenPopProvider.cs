@@ -4,6 +4,7 @@ using MailManager.Config;
 using OpenPop.Mime;
 using OpenPop.Pop3;
 using OpenPop.Mime.Header;
+using System.Linq;
 
 namespace MailManager.Monitor
 {
@@ -40,9 +41,7 @@ namespace MailManager.Monitor
             {
                 var mailEntity = new MailEntity();
 
-                foreach (RfcMailAddress to in mes.Headers.To)
-                    mailEntity.To.Add(to.MailAddress);
-
+                mailEntity.To = (from s in mes.Headers.To select s.MailAddress).ToList();
                 mailEntity.From = mes.Headers.From.MailAddress;
                 mailEntity.Subject = mes.Headers.Subject;
                 mailEntity.DateSent = mes.Headers.DateSent;
