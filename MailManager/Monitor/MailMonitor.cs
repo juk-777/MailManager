@@ -236,7 +236,8 @@ namespace MailManager.Monitor
                     foreach (Timer timer in Timers)
                     {
                         timer.Dispose();
-                    }                                     
+                    }
+                    if (_timer != null) _timer.Dispose();
                 }
                 _disposedValue = true;
             }
