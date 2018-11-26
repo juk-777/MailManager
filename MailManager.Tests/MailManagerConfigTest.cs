@@ -64,8 +64,8 @@ namespace MailManager.Tests
             var configStream = new XmlConfigStream(settingsPath);
 
             ConfigEntity configEntity1 = new ConfigEntity();
-            configEntity1.MailActions = new MailAction[] { new MailAction { ActType = ActionType.Notify, ActTypeValue = "yes" }, new MailAction { ActType = ActionType.Forward, ActTypeValue = "" } };
-            configEntity1.IdentityMessages = new IdentityMessage[] { new IdentityMessage { IdType = IdentityType.To, IdTypeValue = "gus.guskovskij@mail.ru" }, new IdentityMessage { IdType = IdentityType.Title, IdTypeValue = "тест" } };
+            configEntity1.MailActions = new[] { new MailAction { ActType = ActionType.Notify, ActTypeValue = "yes" }, new MailAction { ActType = ActionType.Forward, ActTypeValue = "" } };
+            configEntity1.IdentityMessages = new[] { new IdentityMessage { IdType = IdentityType.To, IdTypeValue = "gus.guskovskij@mail.ru" }, new IdentityMessage { IdType = IdentityType.Title, IdTypeValue = "тест" } };
             configEntity1.Mail = "pop.mail.ru";
             configEntity1.Port = 995;
             configEntity1.Login = "gus.guskovskij";
@@ -79,24 +79,6 @@ namespace MailManager.Tests
             Assert.AreEqual(confEntityList[0].Password, configEntity1.Password);
             Assert.AreEqual(confEntityList[0].MailActions[0].ActType, configEntity1.MailActions[0].ActType);
             Assert.AreEqual(confEntityList[0].IdentityMessages[0].IdType, configEntity1.IdentityMessages[0].IdType);
-        }
-
-        [TestMethod]
-        public void ReadStream_From_TXT_SettingsPathIsNull_ExceptionThrown()
-        {
-            var configStream = new TxtConfigStream(null);
-            Assert.Throws<ApplicationException>(() => configStream.ReadStream());
-        }
-
-        [TestMethod]
-        public void ReadStream_From_TXT_ReturnValueIsNotNull()
-        {
-            var settingsPath = @"Files\MailManagerSettings.txt";
-            var configStream = new TxtConfigStream(settingsPath);
-
-            IList<ConfigEntity> confEntityList = configStream.ReadStream();
-
-            Assert.IsNotEmpty(confEntityList);
         }
 
         [TestMethod]

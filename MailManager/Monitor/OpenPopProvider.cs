@@ -3,7 +3,6 @@ using System.Text;
 using MailManager.Config;
 using OpenPop.Mime;
 using OpenPop.Pop3;
-using OpenPop.Mime.Header;
 using System.Linq;
 
 namespace MailManager.Monitor
@@ -18,19 +17,46 @@ namespace MailManager.Monitor
                 client.Authenticate(configEntity.Login, configEntity.Password);
 
                 int messageCount = client.GetMessageCount();
-                List<Message> allMessagesOP = new List<Message>(messageCount);
+                List<Message> allMessagesOpenPop = new List<Message>(messageCount);
 
                 var mailTransfer = new MailTransfer();
 
                 for (int i = messageCount; i > 0; i--)
                 {
-                    allMessagesOP.Add(client.GetMessage(i));
+                    allMessagesOpenPop.Add(client.GetMessage(i));
                     mailTransfer.Uids.Add(client.GetMessageUid(i));
                 }
 
-                mailTransfer.MailEntities = ConvertMassageToMailEntity(allMessagesOP);
+                mailTransfer.MailEntities = ConvertMassageToMailEntity(allMessagesOpenPop);
                 return mailTransfer;
             }                        
+        }
+
+        public MailTransfer GetUnseenMessages(ConfigEntity configEntity, List<string> seenUids)
+        {
+            using (Pop3Client client = new Pop3Client())
+            {
+                client.Connect(configEntity.Mail, configEntity.Port, useSsl: true);
+                client.Authenticate(configEntity.Login, configEntity.Password);
+
+                var mailTransfer = new MailTransfer();
+                List<string> uids = client.GetMessageUids();
+                List<Message> newMessages = new List<Message>();
+
+                for (int i = 0; i < uids.Count; i++)
+                {
+                    string currentUidOnServer = uids[i];
+                    if (!seenUids.Contains(currentUidOnServer))
+                    {
+                        Message unseenMessage = client.GetMessage(i + 1);
+                        newMessages.Add(unseenMessage);
+                        mailTransfer.Uids.Add(currentUidOnServer);
+                    }
+                }
+
+                mailTransfer.MailEntities = ConvertMassageToMailEntity(newMessages);
+                return mailTransfer;
+            }
         }
 
         private List<MailEntity> ConvertMassageToMailEntity(List<Message> messages)
@@ -63,33 +89,6 @@ namespace MailManager.Monitor
             }
 
             return mailBody;
-        }
-
-        public MailTransfer GetUnseenMessages(ConfigEntity configEntity, List<string> seenUids)
-        {
-            using (Pop3Client client = new Pop3Client())
-            {
-                client.Connect(configEntity.Mail, configEntity.Port, useSsl: true);
-                client.Authenticate(configEntity.Login, configEntity.Password);
-
-                var mailTransfer = new MailTransfer();
-                List<string> uids = client.GetMessageUids();
-                List<Message> newMessages = new List<Message>();
-
-                for (int i = 0; i < uids.Count; i++)
-                {
-                    string currentUidOnServer = uids[i];
-                    if (!seenUids.Contains(currentUidOnServer))
-                    {
-                        Message unseenMessage = client.GetMessage(i + 1);
-                        newMessages.Add(unseenMessage);
-                        mailTransfer.Uids.Add(currentUidOnServer);
-                    }
-                }
-
-                mailTransfer.MailEntities = ConvertMassageToMailEntity(newMessages);
-                return mailTransfer;
-            }  
-        }              
+        }          
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text;
 using MailManager.Config;
 using MailManager.Monitor;
 
@@ -11,10 +10,9 @@ namespace MailManager.Action
         {            
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine($"\nNotify ...");
-            Console.ForegroundColor = ConsoleColor.Gray;            
+            Console.ForegroundColor = ConsoleColor.Gray;
 
-            StringBuilder mailTo = new StringBuilder();
-            mailTo = MailMonitor.GetMailTo(message);
+            var mailTo = MailMonitor.GetMailTo(message);
 
             Console.WriteLine();            
             Console.WriteLine($"To:      {mailTo}");

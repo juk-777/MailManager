@@ -32,15 +32,14 @@ namespace MailManager.Tests
 
             ConfigEntity = new ConfigEntity
             {
-                MailActions =
-                    new Config.MailAction[]
-                    {
-                        new Config.MailAction {ActType = ActionType.Notify, ActTypeValue = "yes"},
-                        new Config.MailAction {ActType = ActionType.Print, ActTypeValue = "yes"},
-                        new Config.MailAction {ActType = ActionType.CopyTo, ActTypeValue = "folder"},
-                        new Config.MailAction {ActType = ActionType.Forward, ActTypeValue = "juk_777@mail.ru"},
-                    },
-                IdentityMessages = new IdentityMessage[]
+                MailActions = new[]
+                {
+                    new Config.MailAction {ActType = ActionType.Notify, ActTypeValue = "yes"},
+                    new Config.MailAction {ActType = ActionType.Print, ActTypeValue = "yes"},
+                    new Config.MailAction {ActType = ActionType.CopyTo, ActTypeValue = "folder"},
+                    new Config.MailAction {ActType = ActionType.Forward, ActTypeValue = "juk_777@mail.ru"},
+                },
+                IdentityMessages = new[]
                 {
                     new IdentityMessage {IdType = IdentityType.To, IdTypeValue = "gus.guskovskij@mail.ru"},
                     new IdentityMessage {IdType = IdentityType.From, IdTypeValue = "juk_777@mail.ru"},

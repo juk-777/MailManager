@@ -18,9 +18,9 @@ namespace MailManager.Config
             if (SettingsPath == null)
                 throw new ApplicationException("Не указан путь к файлу конфигурации!");
 
-            Console.WriteLine($"Файл: {Path.GetExtension(SettingsPath)}. Путь: {SettingsPath} ...");
+            Console.WriteLine($"Файл: {Path.GetExtension(SettingsPath)}. Путь: {SettingsPath} ...");            
 
-            List<ConfigEntity> configEntityList = new List<ConfigEntity>();
+            List<ConfigEntity> configEntityList;
             XmlSerializer formatter = new XmlSerializer(typeof(List<ConfigEntity>));
             try
             {

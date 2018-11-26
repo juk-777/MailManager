@@ -1,5 +1,5 @@
 ﻿using System;
-using MailManager.BL;
+using MailManager.BusinessLogic;
 using MailManager.Config;
 using System.Threading;
 using MailManager.Action;
@@ -35,8 +35,6 @@ namespace MailManager
                     string fileExtension = Path.GetExtension(configPath);
                     if (fileExtension == ".xml")
                         container.RegisterType<IConfigStream, XmlConfigStream>(new InjectionConstructor(new InjectionParameter<string>(configPath)));
-                    else if (fileExtension == ".txt")
-                        container.RegisterType<IConfigStream, TxtConfigStream>(new InjectionConstructor(new InjectionParameter<string>(configPath)));
                     else throw new ApplicationException("Неподдерживаемый формат файла!");
                     break;
                 default:                    
@@ -44,20 +42,12 @@ namespace MailManager
                     configPath = Path.Combine(@"App.config");
                     container.RegisterType<IConfigStream, AppConfigStream>(new InjectionConstructor(new InjectionParameter<string>(configPath)));
                     break;
-            }            
+            }
 
-            #region Инициализация без IoC
+            #region RegisterTypes
 
-            //IMailManagerBL mmBL = new MailManagerBL(new ConfigReader(new XmlConfigStream(configPath)),
-            //    new MailMonitor(new OpenPopProvider(),
-            //        new Action.MailAction(new SmtpSender(new SendWork()), new CopyToFolder(new CopyWork()), new ConsoleNotify(), new PrintDefault(new PrintWork()))));
-
-            #endregion
-
-            #region Инициализация с IoC
-            
             container.RegisterType<IConfigReader, ConfigReader>();
-            container.RegisterType<IConfigWriter, ConfigWriter>();            
+            container.RegisterType<IConfigVerify, ConfigVerify>();
             container.RegisterType<IMailMonitor, MailMonitor>();
             container.RegisterType<IMailProvider, OpenPopProvider>();
             container.RegisterType<IMailAction, MailAction>();
@@ -65,9 +55,9 @@ namespace MailManager
             container.RegisterType<IMailCopy, CopyToFolder>();
             container.RegisterType<INotify, ConsoleNotify>();
             container.RegisterType<IPrint, PrintDefault>();            
-            container.RegisterType<IMailManagerBL, MailManagerBL>();
+            container.RegisterType<IMailBusinessLogic, MailBusinessLogic>();
 
-            var mmBL = container.Resolve<IMailManagerBL>();
+            var businessLogic = container.Resolve<IMailBusinessLogic>();
 
             #endregion
 
@@ -83,7 +73,7 @@ namespace MailManager
                 Console.ForegroundColor = color;
                 Console.ReadLine();
 
-                mmBL.StartJob(token);
+                businessLogic.StartJob(token);
 
                 Console.WriteLine();
                 Console.ReadLine();
@@ -98,7 +88,7 @@ namespace MailManager
             finally
             {
                 container.Dispose();
-                mmBL.Dispose();
+                businessLogic.Dispose();
             }            
 
             Console.WriteLine("\nДо скорой встречи в MailManager ...");
@@ -127,7 +117,6 @@ namespace MailManager
                         FileInfo fileInf = new FileInfo(configPath);
                         if (fileInf.Exists)
                         {
-                            //fileExtension = fileInf.Name.Substring(fileInf.Name.LastIndexOf(".", StringComparison.Ordinal) + 1);
                             fileExtension = Path.GetExtension(configPath);
                             Console.WriteLine($"Файл: {fileExtension}. Путь: {configPath}");
                         }

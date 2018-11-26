@@ -5,57 +5,53 @@ using MailManager.Config;
 using System.Threading;
 using MailManager.Monitor;
 
-namespace MailManager.BL
+namespace MailManager.BusinessLogic
 {
-    public class MailManagerBL : IMailManagerBL
+    public class MailBusinessLogic : IMailBusinessLogic
     {
         private readonly IConfigReader _configReader;
+        private readonly IConfigVerify _configVerify;
         private readonly IMailMonitor _mailMonitor;
         
-        public MailManagerBL(IConfigReader configReader, IMailMonitor mailMonitor)
+        public MailBusinessLogic(IConfigReader configReader, IConfigVerify configVerify, IMailMonitor mailMonitor)
         {
             _configReader = configReader;
+            _configVerify = configVerify;
             _mailMonitor = mailMonitor;
         }
         public async Task StartJob(CancellationToken token)
         {
             Console.WriteLine("\nНачинаю работу ...");
-
-            #region Создаем xml для тестов
-            //IConfigWriter configWriter = new ConfigWriter();
-            //configWriter.WriteConfig();
-            #endregion
             
             Console.WriteLine("\nСчитывание конфигурации ...");
-            List<ConfigEntity> configEntityList = await Task.Run(() => _configReader.ReadConfig());
+            List<ConfigEntity> configEntityList = await Task.Run(() => _configReader.ReadConfig(), token);
 
             if (configEntityList == null || configEntityList.Count == 0)
                 throw new ApplicationException("Файл конфигурации пуст!");
 
             Console.WriteLine("\nПроверка конфигурации ...");
-            if (! _configReader.VerifyConfig(configEntityList))
+            if (! _configVerify.VerifyConfig(configEntityList))
                 return;
 
             if (token.IsCancellationRequested)
                 return;
 
             Console.WriteLine("\nЗапускаем мониторинг почты ...");
-            await Task.Run(()=> _mailMonitor.StartMonitor(configEntityList));
+            await Task.Run(()=> _mailMonitor.StartMonitor(configEntityList), token);
         }
 
         #region IDisposable
-        private bool disposedValue = false; // Для определения избыточных вызовов
+        private bool _disposedValue;
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposedValue)
+            if (!_disposedValue)
             {
                 if (disposing)
                 {
-                    //Console.WriteLine("\nОстанавливаем мониторинг почты ...");
                     _mailMonitor.Dispose();
                 }
-                disposedValue = true;
+                _disposedValue = true;
             }
         }
 

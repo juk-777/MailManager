@@ -25,13 +25,12 @@ namespace MailManager.Action
             mailFrom.Append(configEntity.Mail);
             mailFrom.Replace("pop.", "");
 
-            MailAddress from = new MailAddress(configEntity.Login + "@" + mailFrom.ToString());
+            MailAddress from = new MailAddress(configEntity.Login + "@" + mailFrom);
             MailAddress to = new MailAddress(configEntity.MailActions[rowNumber].ActTypeValue);
             MailMessage m = new MailMessage(@from, to);
             m.Subject = message.Subject;
             m.Body = message.Body.ToString();
-            SmtpClient smtp = new SmtpClient("smtp." + mailFrom.ToString(), 587);
-            smtp = new SmtpClient("smtp." + mailFrom.ToString(), 587);
+            SmtpClient smtp = new SmtpClient("smtp." + mailFrom, 587);            
             smtp.Credentials = new NetworkCredential(configEntity.Login, configEntity.Password);
             smtp.EnableSsl = true;
             smtp.SendMailAsync(m);

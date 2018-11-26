@@ -18,7 +18,7 @@ namespace MailManager.Monitor
         private readonly IMailAction _mailAction;
                 
         private Timer _timer;
-        public List<Timer> _timers = new List<Timer>();
+        public List<Timer> Timers = new List<Timer>();
 
         public MailMonitor(IMailProvider mailProvider, IMailAction mailAction)
         {
@@ -41,9 +41,8 @@ namespace MailManager.Monitor
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine($"\nПервый проход по письмам {configEntity.Mail} ...");
                 Console.ForegroundColor = ConsoleColor.Gray;
-                
-                List<string> seenUidsTemp = new List<string>();
-                seenUidsTemp = FirstAccessToMail(configEntity);               
+
+                var seenUidsTemp = FirstAccessToMail(configEntity);               
 
                 var seenUids = from s in seenUidsTemp select s;
                 WriteFileSeenUids(configEntity, seenUids.ToList(), false);
@@ -53,9 +52,9 @@ namespace MailManager.Monitor
                 Console.WriteLine(e.Message);
             }
 
-            TimerCallback tm = new TimerCallback(OtherAccessToMail);
+            TimerCallback tm = OtherAccessToMail;
             _timer = new Timer(tm, configEntity, 0, 10000);
-            _timers.Add(_timer);            
+            Timers.Add(_timer);            
         }
 
         private void WriteFileSeenUids(ConfigEntity configEntity, List<string> seenUids, bool addWrite)
@@ -81,7 +80,7 @@ namespace MailManager.Monitor
             }         
         }
 
-        public List<string> FirstAccessToMail(ConfigEntity configEntity)
+        private List<string> FirstAccessToMail(ConfigEntity configEntity)
         {            
             try
             {
@@ -98,7 +97,7 @@ namespace MailManager.Monitor
             
         }
 
-        public void OtherAccessToMail(object obj)
+        private void OtherAccessToMail(object obj)
         {                       
             ConfigEntity configEntity = (ConfigEntity)obj;
 
@@ -135,12 +134,11 @@ namespace MailManager.Monitor
             }                            
         }
 
-        public void ProcessingMail(List<MailEntity> messages, ConfigEntity configEntity)
+        private void ProcessingMail(List<MailEntity> messages, ConfigEntity configEntity)
         {            
             foreach (MailEntity mes in messages)
-            {                
-                StringBuilder mailTo = new StringBuilder();
-                mailTo = GetMailTo(mes);
+            {
+                var mailTo = GetMailTo(mes);
 
                 Regex[] regexMas = new Regex[configEntity.IdentityMessages.Length];
                 MatchCollection[] matchesMas = new MatchCollection[configEntity.IdentityMessages.Length];
@@ -188,26 +186,30 @@ namespace MailManager.Monitor
             }            
         }
 
-        public async void DoMailActionAsync(ConfigEntity configEntity, MailEntity message)
+        private async void DoMailActionAsync(ConfigEntity configEntity, MailEntity message)
         {            
             for (int i = 0; i < configEntity.MailActions.Length; i++)
             {
                 switch (configEntity.MailActions[i].ActType)
                 {
-                    case ActionType.Notify:                        
-                        await Task.Run(() => _mailAction.ActionNotify(configEntity, message, i));
+                    case ActionType.Notify:
+                        var i1 = i;
+                        await Task.Run(() => _mailAction.ActionNotify(configEntity, message, i1));
                         break;
 
-                    case ActionType.CopyTo:                            
-                        await Task.Run(() => _mailAction.ActionCopy(configEntity, message, i));
+                    case ActionType.CopyTo:
+                        var i2 = i;
+                        await Task.Run(() => _mailAction.ActionCopy(configEntity, message, i2));
                         break;
 
                     case ActionType.Forward:
-                        await Task.Run(() => _mailAction.ActionSend(configEntity, message, i));
+                        var i3 = i;
+                        await Task.Run(() => _mailAction.ActionSend(configEntity, message, i3));
                         break;
 
-                    case ActionType.Print:                            
-                        await Task.Run(() => _mailAction.ActionPrint(configEntity, message, i));
+                    case ActionType.Print:
+                        var i4 = i;
+                        await Task.Run(() => _mailAction.ActionPrint(configEntity, message, i4));
                         break;
                 }
             }            
@@ -224,21 +226,20 @@ namespace MailManager.Monitor
         }
 
         #region IDisposable
-        private bool disposedValue = false;
+        private bool _disposedValue;
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposedValue)
+            if (!_disposedValue)
             {
                 if (disposing)
                 {
-                    //Console.WriteLine("\nОстанавливаем таймеры ...");
-                    foreach (Timer timer in _timers)
+                    foreach (Timer timer in Timers)
                     {
                         timer.Dispose();
                     }                                     
                 }
-                disposedValue = true;
+                _disposedValue = true;
             }
         }
 

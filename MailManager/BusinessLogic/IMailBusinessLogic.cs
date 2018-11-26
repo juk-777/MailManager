@@ -2,9 +2,9 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MailManager.BL
+namespace MailManager.BusinessLogic
 {
-    public interface IMailManagerBL : IDisposable
+    public interface IMailBusinessLogic : IDisposable
     {
         Task StartJob(CancellationToken token);
     }

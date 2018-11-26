@@ -77,7 +77,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="MailManagerActionTest.cs" />
-    <Compile Include="MailManagerBLTest.cs" />
+    <Compile Include="MailManagerBusinessLogicTest.cs" />
     <Compile Include="MailManagerConfigTest.cs" />
     <Compile Include="MailManagerMonitorTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
