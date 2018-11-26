@@ -88,23 +88,26 @@ namespace MailManager.Tests
         }
 
         [TestMethod]
-        public async Task StartJob_CancellationRequested()
+        public void StartJob_CancellationRequested()
         {
             var mockConfigReader = new Mock<IConfigReader>();
             var mockConfigVerify = new Mock<IConfigVerify>();
             var mockMailMonitor = new Mock<IMailMonitor>();
 
-            List<ConfigEntity> configEntities = new List<ConfigEntity>();
-            configEntities.Add(ConfigEntity);
+            List<ConfigEntity> configEntityList = new List<ConfigEntity>();
+            configEntityList.Add(ConfigEntity);
 
             mockConfigReader
                 .Setup(x => x.ReadConfig())
-                .Returns(configEntities);
+                .Returns(configEntityList);
+            mockConfigVerify
+                .Setup(x => x.VerifyConfig(configEntityList))
+                .Returns(true);
 
             var businessLogic = new MailBusinessLogic(mockConfigReader.Object, mockConfigVerify.Object, mockMailMonitor.Object);
             Cts.Cancel();
 
-            await businessLogic.StartJob(Token);
+            businessLogic.StartJob(Token);
         }
 
         [TestMethod]
@@ -128,6 +131,19 @@ namespace MailManager.Tests
             await businessLogic.StartJob(Token);
 
             mockMailMonitor.Verify(x => x.StartMonitor(It.IsAny<List<ConfigEntity>>()), Times.Once());
+        }
+
+        [TestMethod]
+        public void BusinessLogic_Dispose_Verify()
+        {
+            var mockConfigReader = new Mock<IConfigReader>();
+            var mockConfigVerify = new Mock<IConfigVerify>();
+            var mockMailMonitor = new Mock<IMailMonitor>();
+
+            var businessLogic = new MailBusinessLogic(mockConfigReader.Object, mockConfigVerify.Object, mockMailMonitor.Object);
+            businessLogic.Dispose();
+
+            mockMailMonitor.Verify(x => x.Dispose(), Times.Once());
         }
     }
 }

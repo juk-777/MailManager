@@ -5,6 +5,10 @@ using MailManager.Config;
 using System.Diagnostics;
 using MailManager.Monitor;
 using MailManager.Action;
+using System.Net.Mail;
+using System;
+using System.Text;
+using Assert = NUnit.Framework.Assert;
 
 namespace MailManager.Tests
 {
@@ -12,11 +16,20 @@ namespace MailManager.Tests
     public class MailManagerMonitorTest
     {
         public ConfigEntity ConfigEntity { get; set; }
+        public MailEntity MailEntity { get; set; }
+        public MailTransfer MailTransfer { get; set; }
 
         [TestInitialize]
         public void TestInitialize()
         {
             Debug.WriteLine("Test Initialize");
+
+            MailEntity = new MailEntity();
+            MailEntity.To.Add(new MailAddress("gus.guskovskij@mail.ru"));
+            MailEntity.From = new MailAddress("juk_777@mail.ru");
+            MailEntity.Subject = "1 письмо";
+            MailEntity.Body = new StringBuilder("вап ваппррр");
+            MailEntity.DateSent = DateTime.Now;
 
             ConfigEntity = new ConfigEntity
             {
@@ -37,8 +50,13 @@ namespace MailManager.Tests
                 Mail = "pop.yandex.ru",
                 Port = 995,
                 Login = "tiras.school.2",
-                Password = "pas"
+                Password = "2TiraS2"
             };
+
+            MailTransfer = new MailTransfer();
+            MailTransfer.MailEntities.Add(MailEntity);
+            MailTransfer.Uids.Add("1542704384292");
+            MailTransfer.Uids.Add("1540884182881");
         }
 
         [TestCleanup]
@@ -53,8 +71,16 @@ namespace MailManager.Tests
             var mockMailProvider = new Mock<IMailProvider>();
             var mockMailAction = new Mock<IMailAction>();
 
+            mockMailProvider
+                .Setup(x => x.GetAllMessages(ConfigEntity))
+                .Returns(MailTransfer);
+
+            mockMailProvider
+                .Setup(x => x.GetUnseenMessages(It.IsAny<ConfigEntity>(), It.IsIn<List<string>>()))
+                .Returns(MailTransfer);
+
             var mailMonitor = new MailMonitor(mockMailProvider.Object, mockMailAction.Object);
-            mailMonitor.StartMonitorTask(new ConfigEntity());
+            mailMonitor.StartMonitorTask(ConfigEntity);
 
             mockMailProvider.Verify(x => x.GetAllMessages(It.IsAny<ConfigEntity>()), Times.AtLeastOnce);
             mockMailAction.VerifyAll();
@@ -75,6 +101,39 @@ namespace MailManager.Tests
 
             mockMailProvider.VerifyAll();
             mockMailAction.VerifyAll();
+        }
+
+        [TestMethod]
+        public void MailMonitor_Dispose_Verify()
+        {
+            var mockMailProvider = new Mock<IMailProvider>();
+            var mockMailAction = new Mock<IMailAction>();
+
+            var mailMonitor = new MailMonitor(mockMailProvider.Object, mockMailAction.Object);
+            mailMonitor.Dispose();
+
+            mockMailProvider.VerifyAll();
+            mockMailAction.VerifyAll();
+        }
+
+        [TestMethod]
+        public void OpenPopProvider_GetAllMessages_Verify()
+        {            
+            var openPop = new OpenPopProvider();
+            var mailTransfer = openPop.GetAllMessages(ConfigEntity);
+
+            Assert.IsNotEmpty(mailTransfer.MailEntities);
+            Assert.IsNotEmpty(mailTransfer.Uids);
+        }
+
+        [TestMethod]
+        public void OpenPopProvider_GetUnseenMessages_Verify()
+        {
+            var openPop = new OpenPopProvider();
+            var mailTransfer = openPop.GetUnseenMessages(ConfigEntity, new List<string>());
+
+            Assert.IsNotEmpty(mailTransfer.MailEntities);
+            Assert.IsNotEmpty(mailTransfer.Uids);
         }
     }
 }

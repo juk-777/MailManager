@@ -11,10 +11,34 @@ namespace MailManager.Tests
     [TestClass]
     public class MailManagerConfigTest
     {
+        public ConfigEntity ConfigEntity { get; set; }
+
         [TestInitialize]
         public void TestInitialize()
         {
             Debug.WriteLine("Test Initialize");
+
+            ConfigEntity = new ConfigEntity
+            {
+                MailActions = new[]
+                {
+                    new MailAction {ActType = ActionType.Notify, ActTypeValue = "yes"},
+                    new MailAction {ActType = ActionType.Print, ActTypeValue = "yes"},
+                    new MailAction {ActType = ActionType.CopyTo, ActTypeValue = "folder"},
+                    new MailAction {ActType = ActionType.Forward, ActTypeValue = "juk_777@mail.ru"},
+                },
+                IdentityMessages = new[]
+                {
+                    new IdentityMessage {IdType = IdentityType.To, IdTypeValue = "gus.guskovskij@mail.ru"},
+                    new IdentityMessage {IdType = IdentityType.From, IdTypeValue = "juk_777@mail.ru"},
+                    new IdentityMessage {IdType = IdentityType.Title, IdTypeValue = "пис"},
+                    new IdentityMessage {IdType = IdentityType.Body, IdTypeValue = "вап"}
+                },
+                Mail = "pop.yandex.ru",
+                Port = 995,
+                Login = "tiras.school.2",
+                Password = "pas"
+            };
         }
 
         [TestCleanup]
@@ -37,6 +61,16 @@ namespace MailManager.Tests
             configReader.ReadConfig();
 
             mockConfigStream.Verify();
+        }
+
+        [TestMethod]
+        public void VerifyConfig_Verify()
+        {            
+            List<ConfigEntity> configEntityList = new List<ConfigEntity>();
+            configEntityList.Add(ConfigEntity);
+
+            var configVerify = new ConfigVerify();
+            configVerify.VerifyConfig(configEntityList);
         }
 
         [TestMethod]
