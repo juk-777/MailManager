@@ -12,7 +12,6 @@ namespace MailManager.Config
         public string Password { get; set; }
         public MailAction[] MailActions { get; set; }
         public IdentityMessage[] IdentityMessages { get; set; }
-        public ConfigEntity(){ }        
     }
 
     [Serializable]

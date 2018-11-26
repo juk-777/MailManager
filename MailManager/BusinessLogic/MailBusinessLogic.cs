@@ -22,7 +22,10 @@ namespace MailManager.BusinessLogic
         public async Task StartJob(CancellationToken token)
         {
             Console.WriteLine("\nНачинаю работу ...");
-            
+
+            if (token.IsCancellationRequested)
+                return;
+
             Console.WriteLine("\nСчитывание конфигурации ...");
             List<ConfigEntity> configEntityList = await Task.Run(() => _configReader.ReadConfig(), token);
 
@@ -31,9 +34,6 @@ namespace MailManager.BusinessLogic
 
             Console.WriteLine("\nПроверка конфигурации ...");
             if (! _configVerify.VerifyConfig(configEntityList))
-                return;
-
-            if (token.IsCancellationRequested)
                 return;
 
             Console.WriteLine("\nЗапускаем мониторинг почты ...");

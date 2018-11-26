@@ -6,18 +6,11 @@ using System.Configuration;
 namespace MailManager.Config
 {
     public class AppConfigStream : IConfigStream
-    {
-        public string SettingsPath { get; set; }
-
-        public AppConfigStream(string setPath)
-        {
-            SettingsPath = setPath;
-        }
+    {        
         public List<ConfigEntity> ReadStream()
         {
             List<ConfigEntity> configEntityList = new List<ConfigEntity>();
-            NameValueCollection sAll;
-            sAll = ConfigurationManager.AppSettings;
+            NameValueCollection sAll = ConfigurationManager.AppSettings;
 
             ConfigEntity configEntity = new ConfigEntity();
             foreach (string s in sAll.AllKeys)

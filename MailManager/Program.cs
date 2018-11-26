@@ -13,7 +13,7 @@ namespace MailManager
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             var container = new UnityContainer();
             string configPath;
@@ -27,8 +27,7 @@ namespace MailManager
             {
                 case 1:
                     Console.WriteLine("Считываю конфигурацию из файла App.config");
-                    configPath = Path.Combine(@"App.config");
-                    container.RegisterType<IConfigStream, AppConfigStream>(new InjectionConstructor(new InjectionParameter<string>(configPath)));
+                    container.RegisterType<IConfigStream, AppConfigStream>();
                     break;
                 case 0:                    
                     configPath = GetFile();
@@ -39,8 +38,7 @@ namespace MailManager
                     break;
                 default:                    
                     Console.WriteLine("Ошибочный ввод. \nСчитываю конфигурацию из файла App.config");
-                    configPath = Path.Combine(@"App.config");
-                    container.RegisterType<IConfigStream, AppConfigStream>(new InjectionConstructor(new InjectionParameter<string>(configPath)));
+                    container.RegisterType<IConfigStream, AppConfigStream>();
                     break;
             }
 

@@ -118,8 +118,7 @@ namespace MailManager.Tests
         [TestMethod]
         public void ReadStream_From_AppConfig_ReturnValueIsNotNull()
         {
-            var settingsPath = @"App.config";
-            var configStream = new AppConfigStream(settingsPath);
+            var configStream = new AppConfigStream();
 
             IList<ConfigEntity> confEntityList = configStream.ReadStream();
 

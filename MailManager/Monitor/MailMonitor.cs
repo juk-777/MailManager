@@ -94,7 +94,6 @@ namespace MailManager.Monitor
                 Console.WriteLine(e.Message);
                 throw;
             }
-            
         }
 
         private void OtherAccessToMail(object obj)

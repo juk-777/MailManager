@@ -88,7 +88,7 @@ namespace MailManager.Tests
         }
 
         [TestMethod]
-        public void StartJob_CancellationRequested()
+        public async Task StartJob_CancellationRequested()
         {
             var mockConfigReader = new Mock<IConfigReader>();
             var mockConfigVerify = new Mock<IConfigVerify>();
@@ -105,9 +105,9 @@ namespace MailManager.Tests
                 .Returns(true);
 
             var businessLogic = new MailBusinessLogic(mockConfigReader.Object, mockConfigVerify.Object, mockMailMonitor.Object);
-            Cts.Cancel();
 
-            businessLogic.StartJob(Token);
+            Cts.Cancel();
+            await businessLogic.StartJob(Token);
         }
 
         [TestMethod]
