@@ -9,16 +9,16 @@ namespace MailManager.Action
 {
     public class SmtpSender : IMailSender
     {        
-        public bool SendTo(ConfigEntity configEntity, MailEntity message, int rowNumber)
+        public bool SendTo(ConfigEntity configEntity, MailEntity message, string mailActionValue)
         {
-            if (string.IsNullOrEmpty(configEntity.MailActions[rowNumber].ActTypeValue))
+            if (string.IsNullOrEmpty(mailActionValue))
             {
                 Console.WriteLine("Почтовый ящик не указан!");
                 return false;                                
             }
                         
             Console.ForegroundColor = ConsoleColor.Cyan;            
-            Console.WriteLine($"\nForward: {configEntity.MailActions[rowNumber].ActTypeValue}");
+            Console.WriteLine($"\nForward: {mailActionValue}");
             Console.ForegroundColor = ConsoleColor.Gray;
 
             StringBuilder mailFrom = new StringBuilder();
@@ -26,7 +26,7 @@ namespace MailManager.Action
             mailFrom.Replace("pop.", "");
 
             MailAddress from = new MailAddress(configEntity.Login + "@" + mailFrom);
-            MailAddress to = new MailAddress(configEntity.MailActions[rowNumber].ActTypeValue);
+            MailAddress to = new MailAddress(mailActionValue);
             MailMessage m = new MailMessage(from, to) {Subject = message.Subject, Body = message.Body.ToString()};
             SmtpClient smtp = new SmtpClient("smtp." + mailFrom, 587)
             {

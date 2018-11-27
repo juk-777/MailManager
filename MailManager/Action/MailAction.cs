@@ -18,14 +18,14 @@ namespace MailManager.Action
             _print = print;
         }
 
-        public bool ActionSend(ConfigEntity configEntity, MailEntity message, int rowNumber)
+        public bool ActionSend(ConfigEntity configEntity, MailEntity message, string mailActionValue)
         {
-            return _mailSender.SendTo(configEntity, message, rowNumber);
+            return _mailSender.SendTo(configEntity, message, mailActionValue);
         }
 
-        public bool ActionCopy(ConfigEntity configEntity, MailEntity message, int rowNumber)
+        public bool ActionCopy(ConfigEntity configEntity, MailEntity message, string mailActionValue)
         {
-            return _mailCopy.CopyTo(configEntity, message, rowNumber);
+            return _mailCopy.CopyTo(configEntity, message, mailActionValue);
         }
 
         public bool ActionPrint(MailEntity message)

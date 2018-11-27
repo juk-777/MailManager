@@ -8,14 +8,14 @@ namespace MailManager.Action
 {
     public class CopyToFolder : IMailCopy
     {        
-        public bool CopyTo(ConfigEntity configEntity, MailEntity message, int rowNumber)
+        public bool CopyTo(ConfigEntity configEntity, MailEntity message, string mailActionValue)
         {            
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.WriteLine($"\nCopyToFolder: {configEntity.MailActions[rowNumber].ActTypeValue}");
+            Console.WriteLine($"\nCopyToFolder: {mailActionValue}");
             Console.ForegroundColor = ConsoleColor.Gray;            
 
             string path = @"Files";
-            string subpath = configEntity.MailActions[rowNumber].ActTypeValue;
+            string subpath = mailActionValue;
             DirectoryInfo dirInfo = new DirectoryInfo(path);
             if (!dirInfo.Exists)
             {

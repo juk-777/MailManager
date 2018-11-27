@@ -5,6 +5,6 @@ namespace MailManager.Action
 {
     public interface IMailCopy
     {
-        bool CopyTo(ConfigEntity configEntity, MailEntity message, int rowNumber);
+        bool CopyTo(ConfigEntity configEntity, MailEntity message, string mailActionValue);
     }
 }

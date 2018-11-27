@@ -16,8 +16,6 @@ namespace MailManager.Monitor
     {
         private readonly IMailProvider _mailProvider;
         private readonly IMailAction _mailAction;
-                
-        private Timer _timer;
         private readonly List<Timer> _timers = new List<Timer>();
 
         public MailMonitor(IMailProvider mailProvider, IMailAction mailAction)
@@ -53,8 +51,8 @@ namespace MailManager.Monitor
             }
 
             TimerCallback tm = OtherAccessToMail;
-            _timer = new Timer(tm, configEntity, 0, 10000);
-            _timers.Add(_timer);            
+            var timer = new Timer(tm, configEntity, 0, 2000);
+            _timers.Add(timer);
         }
 
         private void WriteFileSeenUids(ConfigEntity configEntity, List<string> seenUids, bool addWrite)
@@ -197,12 +195,12 @@ namespace MailManager.Monitor
 
                     case ActionType.CopyTo:
                         var i2 = i;
-                        await Task.Run(() => _mailAction.ActionCopy(configEntity, message, i2));
+                        await Task.Run(() => _mailAction.ActionCopy(configEntity, message, configEntity.MailActions[i2].ActTypeValue));
                         break;
 
                     case ActionType.Forward:
                         var i3 = i;
-                        await Task.Run(() => _mailAction.ActionSend(configEntity, message, i3));
+                        await Task.Run(() => _mailAction.ActionSend(configEntity, message, configEntity.MailActions[i3].ActTypeValue));
                         break;
 
                     case ActionType.Print:
@@ -231,11 +229,10 @@ namespace MailManager.Monitor
             {
                 if (disposing)
                 {
-                    foreach (Timer timer in _timers)
+                    foreach (var timer in _timers)
                     {
                         timer.Dispose();
                     }
-                    if (_timer != null) _timer.Dispose();
                 }
                 _disposedValue = true;
             }
