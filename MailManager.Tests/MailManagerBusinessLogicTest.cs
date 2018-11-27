@@ -15,9 +15,9 @@ namespace MailManager.Tests
     [TestClass]
     public class MailManagerBusinessLogicTest
     {
-        public CancellationTokenSource Cts { get; set; }        
-        public CancellationToken Token { get; set; }
-        public ConfigEntity ConfigEntity { get; set; }
+        private CancellationTokenSource Cts { get; set; }
+        private CancellationToken Token { get; set; }
+        private ConfigEntity ConfigEntity { get; set; }
 
         [TestInitialize]
         public void TestInitialize()
@@ -94,8 +94,7 @@ namespace MailManager.Tests
             var mockConfigVerify = new Mock<IConfigVerify>();
             var mockMailMonitor = new Mock<IMailMonitor>();
 
-            List<ConfigEntity> configEntityList = new List<ConfigEntity>();
-            configEntityList.Add(ConfigEntity);
+            List<ConfigEntity> configEntityList = new List<ConfigEntity> {ConfigEntity};
 
             mockConfigReader
                 .Setup(x => x.ReadConfig())
@@ -117,8 +116,7 @@ namespace MailManager.Tests
             var mockConfigVerify = new Mock<IConfigVerify>();
             var mockMailMonitor = new Mock<IMailMonitor>();
 
-            List<ConfigEntity> configEntityList = new List<ConfigEntity>();
-            configEntityList.Add(new ConfigEntity());
+            List<ConfigEntity> configEntityList = new List<ConfigEntity> {new ConfigEntity()};
 
             mockConfigReader
                 .Setup(x => x.ReadConfig())

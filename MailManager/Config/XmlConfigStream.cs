@@ -7,7 +7,7 @@ namespace MailManager.Config
 {
     public class XmlConfigStream : IConfigStream
     {
-        public string SettingsPath { get; set; }
+        private string SettingsPath { get; }
 
         public XmlConfigStream(string setPath)
         {

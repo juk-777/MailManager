@@ -15,8 +15,8 @@ namespace MailManager.Tests
     [TestClass]
     public class MailManagerActionTest
     {
-        public MailEntity MailEntity { get; set; }
-        public ConfigEntity ConfigEntity { get; set; }
+        private MailEntity MailEntity { get; set; }
+        private ConfigEntity ConfigEntity { get; set; }
 
         [TestInitialize]
         public void TestInitialize()
@@ -70,13 +70,13 @@ namespace MailManager.Tests
             var mailAction = new Action.MailAction(mockMailSender.Object, mockMailCopy.Object, mockNotify.Object, mockPrint.Object);
             mailAction.ActionSend(ConfigEntity, MailEntity, 3);
             mailAction.ActionCopy(ConfigEntity, MailEntity, 2);
-            mailAction.ActionNotify(ConfigEntity, MailEntity, 0);
-            mailAction.ActionPrint(ConfigEntity, MailEntity, 1);
+            mailAction.ActionNotify(MailEntity);
+            mailAction.ActionPrint(MailEntity);
 
             mockMailSender.Verify(x => x.SendTo(ConfigEntity, MailEntity, 3), Times.Once());
             mockMailCopy.Verify(x => x.CopyTo(ConfigEntity, MailEntity, 2), Times.Once());
-            mockNotify.Verify(x => x.NotifyTo(ConfigEntity, MailEntity, 0), Times.Once());
-            mockPrint.Verify(x => x.PrintTo(ConfigEntity, MailEntity, 1), Times.Once());
+            mockNotify.Verify(x => x.NotifyTo(MailEntity), Times.Once());
+            mockPrint.Verify(x => x.PrintTo(MailEntity), Times.Once());
         }
 
         [TestMethod]
@@ -119,10 +119,10 @@ namespace MailManager.Tests
             var mockNotify = new Mock<INotify>();
             var mockPrint = new Mock<IPrint>();
 
-            mockNotify.Setup(x => x.NotifyTo(It.IsAny<ConfigEntity>(), It.IsAny<MailEntity>(), It.IsAny<int>())).Returns(true);
+            mockNotify.Setup(x => x.NotifyTo(It.IsAny<MailEntity>())).Returns(true);
 
             var mailAction = new Action.MailAction(mockMailSender.Object, mockMailCopy.Object, mockNotify.Object, mockPrint.Object);
-            var res = mailAction.ActionNotify(ConfigEntity, MailEntity, 1);            
+            var res = mailAction.ActionNotify(MailEntity);            
 
             Assert.That(res, Is.True);
         }
@@ -135,10 +135,10 @@ namespace MailManager.Tests
             var mockNotify = new Mock<INotify>();
             var mockPrint = new Mock<IPrint>();
 
-            mockPrint.Setup(x => x.PrintTo(It.IsAny<ConfigEntity>(), It.IsAny<MailEntity>(), It.IsAny<int>())).Returns(true);           
+            mockPrint.Setup(x => x.PrintTo(It.IsAny<MailEntity>())).Returns(true);           
 
             var mailAction = new Action.MailAction(mockMailSender.Object, mockMailCopy.Object, mockNotify.Object, mockPrint.Object);
-            var res = mailAction.ActionPrint(ConfigEntity, MailEntity, 1);
+            var res = mailAction.ActionPrint(MailEntity);
 
             Assert.That(res, Is.True);
         }

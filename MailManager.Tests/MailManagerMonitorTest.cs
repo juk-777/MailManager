@@ -15,9 +15,9 @@ namespace MailManager.Tests
     [TestClass]
     public class MailManagerMonitorTest
     {
-        public ConfigEntity ConfigEntity { get; set; }
-        public MailEntity MailEntity { get; set; }
-        public MailTransfer MailTransfer { get; set; }
+        private ConfigEntity ConfigEntity { get; set; }
+        private MailEntity MailEntity { get; set; }
+        private MailTransfer MailTransfer { get; set; }
 
         [TestInitialize]
         public void TestInitialize()
@@ -90,10 +90,9 @@ namespace MailManager.Tests
         public void MailMonitor_StartMonitor_Verify()
         {
             var mockMailProvider = new Mock<IMailProvider>();
-            var mockMailAction = new Mock<IMailAction>();            
+            var mockMailAction = new Mock<IMailAction>();
 
-            List<ConfigEntity> configEntities = new List<ConfigEntity>();
-            configEntities.Add(ConfigEntity);
+            List<ConfigEntity> configEntities = new List<ConfigEntity> {ConfigEntity};
 
             var mailMonitor = new MailMonitor(mockMailProvider.Object, mockMailAction.Object);
 

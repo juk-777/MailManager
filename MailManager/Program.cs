@@ -11,12 +11,11 @@ using System.IO;
 
 namespace MailManager
 {
-    class Program
+    static class Program
     {
         static void Main()
         {
             var container = new UnityContainer();
-            string configPath;
 
             Console.WriteLine("Добро пожаловать в MailManager ...");
             Console.WriteLine("\nВведите '1' для того, чтобы считать конфигурацию из файла App.config.");
@@ -30,11 +29,11 @@ namespace MailManager
                     container.RegisterType<IConfigStream, AppConfigStream>();
                     break;
                 case 0:                    
-                    configPath = GetFile();
+                    var configPath = GetFile();
                     string fileExtension = Path.GetExtension(configPath);
                     if (fileExtension == ".xml")
                         container.RegisterType<IConfigStream, XmlConfigStream>(new InjectionConstructor(new InjectionParameter<string>(configPath)));
-                    else throw new ApplicationException("Неподдерживаемый формат файла!");
+                    else throw new ApplicationException("Не поддерживаемый формат файла!");
                     break;
                 default:                    
                     Console.WriteLine("Ошибочный ввод. \nСчитываю конфигурацию из файла App.config");

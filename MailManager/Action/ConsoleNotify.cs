@@ -1,15 +1,14 @@
 ﻿using System;
-using MailManager.Config;
 using MailManager.Monitor;
 
 namespace MailManager.Action
 {
     public class ConsoleNotify : INotify
     {
-        public bool NotifyTo(ConfigEntity configEntity, MailEntity message, int rowNumber)
+        public bool NotifyTo(MailEntity message)
         {            
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.WriteLine($"\nNotify ...");
+            Console.WriteLine("\nNotify ...");
             Console.ForegroundColor = ConsoleColor.Gray;
 
             var mailTo = MailMonitor.GetMailTo(message);

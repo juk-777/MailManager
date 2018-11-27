@@ -1,20 +1,19 @@
-﻿using System.Text;
-using MailManager.Config;
-using MailManager.Monitor;
-using System;
-using System.Drawing.Printing;
+﻿using System;
 using System.Drawing;
+using System.Drawing.Printing;
+using System.Text;
+using MailManager.Monitor;
 
 namespace MailManager.Action
 {
     public class PrintDefault : IPrint
     {
-        public StringBuilder MailResult { get; set; }        
+        private StringBuilder MailResult { get; set; }        
 
-        public bool PrintTo(ConfigEntity configEntity, MailEntity message, int rowNumber)
+        public bool PrintTo(MailEntity message)
         {            
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.WriteLine($"\nPrint ...");
+            Console.WriteLine("\nPrint ...");
             Console.ForegroundColor = ConsoleColor.Gray;            
 
             MailResult = new StringBuilder();

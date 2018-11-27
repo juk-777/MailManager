@@ -28,14 +28,14 @@ namespace MailManager.Action
             return _mailCopy.CopyTo(configEntity, message, rowNumber);
         }
 
-        public bool ActionPrint(ConfigEntity configEntity, MailEntity message, int rowNumber)
+        public bool ActionPrint(MailEntity message)
         {
-            return _print.PrintTo(configEntity, message, rowNumber);
+            return _print.PrintTo(message);
         }
 
-        public bool ActionNotify(ConfigEntity configEntity, MailEntity message, int rowNumber)
+        public bool ActionNotify(MailEntity message)
         {
-            return _notify.NotifyTo(configEntity, message, rowNumber);
+            return _notify.NotifyTo(message);
         }
          
     }

@@ -11,7 +11,7 @@ namespace MailManager.Tests
     [TestClass]
     public class MailManagerConfigTest
     {
-        public ConfigEntity ConfigEntity { get; set; }
+        private ConfigEntity ConfigEntity { get; set; }
 
         [TestInitialize]
         public void TestInitialize()
@@ -65,9 +65,8 @@ namespace MailManager.Tests
 
         [TestMethod]
         public void VerifyConfig_Verify()
-        {            
-            List<ConfigEntity> configEntityList = new List<ConfigEntity>();
-            configEntityList.Add(ConfigEntity);
+        {
+            List<ConfigEntity> configEntityList = new List<ConfigEntity> {ConfigEntity};
 
             var configVerify = new ConfigVerify();
             configVerify.VerifyConfig(configEntityList);
@@ -97,13 +96,23 @@ namespace MailManager.Tests
             var settingsPath = @"Files\MailManagerSettings.xml";
             var configStream = new XmlConfigStream(settingsPath);
 
-            ConfigEntity configEntity1 = new ConfigEntity();
-            configEntity1.MailActions = new[] { new MailAction { ActType = ActionType.Notify, ActTypeValue = "yes" }, new MailAction { ActType = ActionType.Forward, ActTypeValue = "" } };
-            configEntity1.IdentityMessages = new[] { new IdentityMessage { IdType = IdentityType.To, IdTypeValue = "gus.guskovskij@mail.ru" }, new IdentityMessage { IdType = IdentityType.Title, IdTypeValue = "тест" } };
-            configEntity1.Mail = "pop.mail.ru";
-            configEntity1.Port = 995;
-            configEntity1.Login = "gus.guskovskij";
-            configEntity1.Password = "11guskovskij11";
+            ConfigEntity configEntity1 = new ConfigEntity
+            {
+                MailActions = new[]
+                {
+                    new MailAction {ActType = ActionType.Notify, ActTypeValue = "yes"},
+                    new MailAction {ActType = ActionType.Forward, ActTypeValue = ""}
+                },
+                IdentityMessages = new[]
+                {
+                    new IdentityMessage {IdType = IdentityType.To, IdTypeValue = "gus.guskovskij@mail.ru"},
+                    new IdentityMessage {IdType = IdentityType.Title, IdTypeValue = "тест"}
+                },
+                Mail = "pop.mail.ru",
+                Port = 995,
+                Login = "gus.guskovskij",
+                Password = "11guskovskij11"
+            };
 
             IList<ConfigEntity> confEntityList = configStream.ReadStream();
             

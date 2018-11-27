@@ -65,13 +65,15 @@ namespace MailManager.Monitor
 
             foreach (Message mes in messages)
             {
-                var mailEntity = new MailEntity();
+                var mailEntity = new MailEntity
+                {
+                    To = (from s in mes.Headers.To select s.MailAddress).ToList(),
+                    From = mes.Headers.From.MailAddress,
+                    Subject = mes.Headers.Subject,
+                    DateSent = mes.Headers.DateSent,
+                    Body = GetMailBody(mes)
+                };
 
-                mailEntity.To = (from s in mes.Headers.To select s.MailAddress).ToList();
-                mailEntity.From = mes.Headers.From.MailAddress;
-                mailEntity.Subject = mes.Headers.Subject;
-                mailEntity.DateSent = mes.Headers.DateSent;
-                mailEntity.Body = GetMailBody(mes);
 
                 retMessages.Add(mailEntity);
             }

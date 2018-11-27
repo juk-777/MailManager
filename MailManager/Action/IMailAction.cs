@@ -7,7 +7,7 @@ namespace MailManager.Action
     {
         bool ActionSend(ConfigEntity configEntity, MailEntity message, int rowNumber);
         bool ActionCopy(ConfigEntity configEntity, MailEntity message, int rowNumber);
-        bool ActionPrint(ConfigEntity configEntity, MailEntity message, int rowNumber);
-        bool ActionNotify(ConfigEntity configEntity, MailEntity message, int rowNumber);
+        bool ActionPrint(MailEntity message);
+        bool ActionNotify(MailEntity message);
     }
 }

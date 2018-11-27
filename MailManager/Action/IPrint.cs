@@ -1,10 +1,9 @@
-﻿using MailManager.Config;
-using MailManager.Monitor;
+﻿using MailManager.Monitor;
 
 namespace MailManager.Action
 {
     public interface IPrint
     {
-        bool PrintTo(ConfigEntity configEntity, MailEntity message, int rowNumber);
+        bool PrintTo(MailEntity message);
     }
 }

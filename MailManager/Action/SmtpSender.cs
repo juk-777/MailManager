@@ -27,12 +27,11 @@ namespace MailManager.Action
 
             MailAddress from = new MailAddress(configEntity.Login + "@" + mailFrom);
             MailAddress to = new MailAddress(configEntity.MailActions[rowNumber].ActTypeValue);
-            MailMessage m = new MailMessage(@from, to);
-            m.Subject = message.Subject;
-            m.Body = message.Body.ToString();
-            SmtpClient smtp = new SmtpClient("smtp." + mailFrom, 587);            
-            smtp.Credentials = new NetworkCredential(configEntity.Login, configEntity.Password);
-            smtp.EnableSsl = true;
+            MailMessage m = new MailMessage(from, to) {Subject = message.Subject, Body = message.Body.ToString()};
+            SmtpClient smtp = new SmtpClient("smtp." + mailFrom, 587)
+            {
+                Credentials = new NetworkCredential(configEntity.Login, configEntity.Password), EnableSsl = true
+            };
             smtp.SendMailAsync(m);
 
             Console.WriteLine("Письмо отправлено");
