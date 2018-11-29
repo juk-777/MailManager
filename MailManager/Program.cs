@@ -48,6 +48,8 @@ namespace MailManager
             container.RegisterType<IMailMonitor, MailMonitor>();
             container.RegisterType<IMailProvider, OpenPopProvider>();
             container.RegisterType<IMailAction, MailAction>();
+            container.RegisterType<ISaveSeenUids, TxtSaveSeenUids>();
+            container.RegisterType<IReadSeenUids, TxtReadSeenUids>();
             container.RegisterType<IMailSender, SmtpSender>();
             container.RegisterType<IMailCopy, CopyToFolder>();
             container.RegisterType<INotify, ConsoleNotify>();
@@ -63,11 +65,10 @@ namespace MailManager
                 CancellationTokenSource cts = new CancellationTokenSource();
                 CancellationToken token = cts.Token;
 
-                ConsoleColor color = Console.ForegroundColor;
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine("\nДля запуска работы нажмите Enter");
                 Console.WriteLine("Для завершения работы нажмите Enter");
-                Console.ForegroundColor = color;
+                Console.ForegroundColor = ConsoleColor.Gray;
                 Console.ReadLine();
 
                 businessLogic.StartJob(token);
@@ -95,7 +96,6 @@ namespace MailManager
         private static string GetFile()
         {            
             string configPath = Path.Combine(@"Files", @"MailManagerSettings.xml");
-            string fileExtension;
             Console.WriteLine("--------------------");
             Console.WriteLine($"Введите '1' для того, чтобы считать конфигурацию из предварительно подготовленного XML файла \n{configPath}");
             Console.WriteLine("\nЛибо введите любой другой путь к файлу конфигурации.");
@@ -104,20 +104,14 @@ namespace MailManager
             switch (configPath)
             {
                 case "1":
-                    configPath = Path.Combine(@"Files", @"MailManagerSettings.xml");
-                    fileExtension = Path.GetExtension(configPath);
-                    Console.WriteLine($"Файл: {fileExtension}. Путь: {configPath}");
+                    configPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Files", @"MailManagerSettings.xml");
                     break;
                 default:
                     if (!string.IsNullOrEmpty(configPath))
                     {                        
                         FileInfo fileInf = new FileInfo(configPath);
-                        if (fileInf.Exists)
-                        {
-                            fileExtension = Path.GetExtension(configPath);
-                            Console.WriteLine($"Файл: {fileExtension}. Путь: {configPath}");
-                        }
-                        else throw new ApplicationException("Ошибка при указании пути к файлу конфигурации!");                        
+                        if (!fileInf.Exists)
+                            throw new ApplicationException("Ошибка при указании пути к файлу конфигурации!");                        
                     }
                     else throw new ApplicationException("Ошибка при указании пути к файлу конфигурации!");                    
 

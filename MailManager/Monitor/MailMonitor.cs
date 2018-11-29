@@ -16,12 +16,16 @@ namespace MailManager.Monitor
     {
         private readonly IMailProvider _mailProvider;
         private readonly IMailAction _mailAction;
+        private readonly ISaveSeenUids _saverSeenUids;
+        private readonly IReadSeenUids _readerSeenUids;
         private readonly List<Timer> _timers = new List<Timer>();
 
-        public MailMonitor(IMailProvider mailProvider, IMailAction mailAction)
+        public MailMonitor(IMailProvider mailProvider, IMailAction mailAction, ISaveSeenUids saverSeenUids, IReadSeenUids readerSeenUids)
         {
             _mailProvider = mailProvider;
             _mailAction = mailAction;
+            _saverSeenUids = saverSeenUids;
+            _readerSeenUids = readerSeenUids;
         }
 
         public void StartMonitor(List<ConfigEntity> configEntityList)
@@ -33,50 +37,21 @@ namespace MailManager.Monitor
         }
 
         public void StartMonitorTask(ConfigEntity configEntity)
-        {            
-            try
-            {               
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine($"\nПервый проход по письмам {configEntity.Mail} ...");
-                Console.ForegroundColor = ConsoleColor.Gray;
+        {
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine($"\nПервый проход по письмам {configEntity.Mail} ...");
+            Console.ForegroundColor = ConsoleColor.Gray;
 
-                var seenUidsTemp = FirstAccessToMail(configEntity);               
+            var seenUidsTemp = FirstAccessToMail(configEntity);               
+            var seenUids = from s in seenUidsTemp select s;
 
-                var seenUids = from s in seenUidsTemp select s;
-                WriteFileSeenUids(configEntity, seenUids.ToList(), false);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-            }
+            if (!_saverSeenUids.Save(configEntity, seenUids.ToList(), false))
+                throw new ApplicationException("Ошибка при сохранении Uid прочитанных писем!");
 
             TimerCallback tm = OtherAccessToMail;
             var timer = new Timer(tm, configEntity, 0, 2000);
             _timers.Add(timer);
-        }
-
-        private void WriteFileSeenUids(ConfigEntity configEntity, List<string> seenUids, bool addWrite)
-        {            
-            string path = @"Files";
-            DirectoryInfo dirInfo = new DirectoryInfo(path);
-            if (!dirInfo.Exists)
-            {
-                dirInfo.Create();
-            }            
-            string writePath = Path.Combine(path, configEntity.Mail + "_" + configEntity.Login + "_SeenUids" + ".txt");
-
-            StringBuilder seenUidsStrBuild = new StringBuilder();
-            foreach (string su in seenUids)
-            {
-                seenUidsStrBuild.Append(su);
-                seenUidsStrBuild.AppendLine();
-            }
-
-            using (StreamWriter sw = new StreamWriter(writePath, addWrite, Encoding.Default))
-            {
-                sw.WriteLineAsync(seenUidsStrBuild.ToString().Trim());
-            }         
-        }
+        }        
 
         private List<string> FirstAccessToMail(ConfigEntity configEntity)
         {            
@@ -103,23 +78,16 @@ namespace MailManager.Monitor
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine($"\nВторичные проходы по письмам {configEntity.Mail} ...");
                 Console.ForegroundColor = ConsoleColor.Gray;
-                                
-                string path = Path.Combine(@"Files", configEntity.Mail + "_" + configEntity.Login + "_SeenUids" + ".txt");
-                List<string> seenUids = new List<string>();
 
-                using (StreamReader sr = new StreamReader(path, Encoding.Default))
-                {
-                    string line;
-                    while ((line = sr.ReadLine()) != null)
-                    {
-                        seenUids.Add(line);
-                    }
-                }
+                List<string> seenUids = _readerSeenUids.Read(configEntity);
 
                 var mailTransfer = _mailProvider.GetUnseenMessages(configEntity, seenUids);
 
                 if (mailTransfer.Uids != null && mailTransfer.Uids.Count != 0)
-                    WriteFileSeenUids(configEntity, mailTransfer.Uids, true);                                
+                {
+                    if (!_saverSeenUids.Save(configEntity, mailTransfer.Uids, true))
+                        throw new ApplicationException("Ошибка при сохранении Uid прочитанных писем!");
+                }                                
 
                 if (mailTransfer.MailEntities != null && mailTransfer.MailEntities.Count != 0)
                     ProcessingMail(mailTransfer.MailEntities, configEntity);

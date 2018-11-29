@@ -14,7 +14,7 @@ namespace MailManager.Action
             Console.WriteLine($"\nCopyToFolder: {mailActionValue}");
             Console.ForegroundColor = ConsoleColor.Gray;            
 
-            string path = @"Files";
+            string path = AppDomain.CurrentDomain.BaseDirectory + @"Files";
             string subpath = mailActionValue;
             DirectoryInfo dirInfo = new DirectoryInfo(path);
             if (!dirInfo.Exists)

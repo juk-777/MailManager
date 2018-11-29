@@ -70,19 +70,30 @@ namespace MailManager.Tests
         {
             var mockMailProvider = new Mock<IMailProvider>();
             var mockMailAction = new Mock<IMailAction>();
+            var mockSaverSeenUids = new Mock<ISaveSeenUids>();
+            var mockReaderSeenUids = new Mock<IReadSeenUids>();
 
             mockMailProvider
                 .Setup(x => x.GetAllMessages(ConfigEntity))
                 .Returns(MailTransfer);
 
             mockMailProvider
-                .Setup(x => x.GetUnseenMessages(It.IsAny<ConfigEntity>(), It.IsIn<List<string>>()))
+                .Setup(x => x.GetUnseenMessages(It.IsAny<ConfigEntity>(), It.IsAny<List<string>>()))
                 .Returns(MailTransfer);
 
-            var mailMonitor = new MailMonitor(mockMailProvider.Object, mockMailAction.Object);
+            mockSaverSeenUids
+                .Setup(x => x.Save(It.IsAny<ConfigEntity>(), It.IsAny<List<string>>(), It.IsAny<bool>()))
+                .Returns(true);
+
+            mockReaderSeenUids
+                .Setup(x => x.Read(It.IsAny<ConfigEntity>()))
+                .Returns(It.IsAny<List<string>>());
+
+            var mailMonitor = new MailMonitor(mockMailProvider.Object, mockMailAction.Object, mockSaverSeenUids.Object, mockReaderSeenUids.Object);
             mailMonitor.StartMonitorTask(ConfigEntity);
 
             mockMailProvider.Verify(x => x.GetAllMessages(It.IsAny<ConfigEntity>()), Times.AtLeastOnce);
+            mockMailProvider.Verify(x => x.GetUnseenMessages(It.IsAny<ConfigEntity>(), It.IsAny<List<string>>()), Times.AtLeastOnce);
             mockMailAction.VerifyAll();
         }
 
@@ -91,10 +102,12 @@ namespace MailManager.Tests
         {
             var mockMailProvider = new Mock<IMailProvider>();
             var mockMailAction = new Mock<IMailAction>();
+            var mockSaverSeenUids = new Mock<ISaveSeenUids>();
+            var mockReaderSeenUids = new Mock<IReadSeenUids>();
 
-            List<ConfigEntity> configEntities = new List<ConfigEntity> {ConfigEntity};
+            List<ConfigEntity> configEntities = new List<ConfigEntity> { ConfigEntity };
 
-            var mailMonitor = new MailMonitor(mockMailProvider.Object, mockMailAction.Object);
+            var mailMonitor = new MailMonitor(mockMailProvider.Object, mockMailAction.Object, mockSaverSeenUids.Object, mockReaderSeenUids.Object);
 
             mailMonitor.StartMonitor(configEntities);
 
@@ -107,8 +120,10 @@ namespace MailManager.Tests
         {
             var mockMailProvider = new Mock<IMailProvider>();
             var mockMailAction = new Mock<IMailAction>();
+            var mockSaverSeenUids = new Mock<ISaveSeenUids>();
+            var mockReaderSeenUids = new Mock<IReadSeenUids>();
 
-            var mailMonitor = new MailMonitor(mockMailProvider.Object, mockMailAction.Object);
+            var mailMonitor = new MailMonitor(mockMailProvider.Object, mockMailAction.Object, mockSaverSeenUids.Object, mockReaderSeenUids.Object);
             mailMonitor.Dispose();
 
             mockMailProvider.VerifyAll();
@@ -117,7 +132,7 @@ namespace MailManager.Tests
 
         [TestMethod]
         public void OpenPopProvider_GetAllMessages_Verify()
-        {            
+        {
             var openPop = new OpenPopProvider();
             var mailTransfer = openPop.GetAllMessages(ConfigEntity);
 
