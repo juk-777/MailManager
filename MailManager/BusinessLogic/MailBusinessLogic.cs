@@ -30,11 +30,11 @@ namespace MailManager.BusinessLogic
             List<ConfigEntity> configEntityList = await Task.Run(() => _configReader.ReadConfig(), token);
 
             if (configEntityList == null || configEntityList.Count == 0)
-                throw new ApplicationException("Файл конфигурации пуст!");
+                throw new ArgumentException("Файл конфигурации пуст!");
 
             Console.WriteLine("\nПроверка конфигурации ...");
             if (! _configVerify.VerifyConfig(configEntityList))
-                return;
+                throw new ArgumentException("Проверка завершена с ошибкой!");
 
             Console.WriteLine("\nЗапускаем мониторинг почты ...");
             await Task.Run(()=> _mailMonitor.StartMonitor(configEntityList), token);

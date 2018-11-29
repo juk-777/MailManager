@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Assert = NUnit.Framework.Assert;
+using StringAssert = NUnit.Framework.StringAssert;
 
 namespace MailManager.Tests
 {
@@ -56,6 +57,42 @@ namespace MailManager.Tests
         }
 
         [TestMethod]
+        public async Task StartJob_CancellationRequested()
+        {
+            var mockConfigReader = new Mock<IConfigReader>();
+            var mockConfigVerify = new Mock<IConfigVerify>();
+            var mockMailMonitor = new Mock<IMailMonitor>();
+
+            var businessLogic = new MailBusinessLogic(mockConfigReader.Object, mockConfigVerify.Object, mockMailMonitor.Object);
+
+            Cts.Cancel();
+            await businessLogic.StartJob(Token);
+
+            mockConfigReader.Verify(x => x.ReadConfig(), Times.Never);
+            mockConfigVerify.Verify(x => x.VerifyConfig(It.IsAny<List<ConfigEntity>>()), Times.Never);
+            mockMailMonitor.Verify(x => x.StartMonitor(It.IsAny<List<ConfigEntity>>()), Times.Never);
+        }
+
+        [TestMethod]
+        public async Task StartJob_ReadConfig_Verify()
+        {
+            var mockConfigReader = new Mock<IConfigReader>();
+            var mockConfigVerify = new Mock<IConfigVerify>();
+            var mockMailMonitor = new Mock<IMailMonitor>();
+
+            List<ConfigEntity> configEntityList = new List<ConfigEntity> { ConfigEntity };
+
+            mockConfigReader
+                .Setup(x => x.ReadConfig())
+                .Returns(configEntityList);
+
+            var businessLogic = new MailBusinessLogic(mockConfigReader.Object, mockConfigVerify.Object, mockMailMonitor.Object);            
+            await businessLogic.StartJob(Token);
+
+            mockConfigReader.VerifyAll();
+        }
+
+        [TestMethod]
         public void StartJob_ConfEntitysNotCreated_ExceptionThrown_Null()
         {
             var mockConfigReader = new Mock<IConfigReader>();
@@ -67,8 +104,10 @@ namespace MailManager.Tests
                 .Returns<List<ConfigEntity>>(null);
 
             var businessLogic = new MailBusinessLogic(mockConfigReader.Object, mockConfigVerify.Object, mockMailMonitor.Object);
+            string message = "Файл конфигурации пуст!";
+            var ex = Assert.ThrowsAsync<ArgumentException>(() => businessLogic.StartJob(Token));
 
-            Assert.ThrowsAsync<ApplicationException>(() => businessLogic.StartJob(Token));
+            StringAssert.Contains(message, ex.Message);
         }
 
         [TestMethod]
@@ -83,18 +122,20 @@ namespace MailManager.Tests
                 .Returns(new List<ConfigEntity>());
 
             var businessLogic = new MailBusinessLogic(mockConfigReader.Object, mockConfigVerify.Object, mockMailMonitor.Object);
+            string message = "Файл конфигурации пуст!";
+            var ex = Assert.ThrowsAsync<ArgumentException>(() => businessLogic.StartJob(Token));
 
-            Assert.ThrowsAsync<ApplicationException>(() => businessLogic.StartJob(Token));
+            StringAssert.Contains(message, ex.Message);
         }
 
         [TestMethod]
-        public async Task StartJob_CancellationRequested()
+        public async Task StartJob_VerifyConfig_Verify()
         {
             var mockConfigReader = new Mock<IConfigReader>();
             var mockConfigVerify = new Mock<IConfigVerify>();
             var mockMailMonitor = new Mock<IMailMonitor>();
 
-            List<ConfigEntity> configEntityList = new List<ConfigEntity> {ConfigEntity};
+            List<ConfigEntity> configEntityList = new List<ConfigEntity> { ConfigEntity };
 
             mockConfigReader
                 .Setup(x => x.ReadConfig())
@@ -104,9 +145,32 @@ namespace MailManager.Tests
                 .Returns(true);
 
             var businessLogic = new MailBusinessLogic(mockConfigReader.Object, mockConfigVerify.Object, mockMailMonitor.Object);
-
-            Cts.Cancel();
             await businessLogic.StartJob(Token);
+
+            mockConfigVerify.VerifyAll();
+        }
+
+        [TestMethod]
+        public void StartJob_VerifyConfig_ExceptionThrown_ReturnFalse()
+        {
+            var mockConfigReader = new Mock<IConfigReader>();
+            var mockConfigVerify = new Mock<IConfigVerify>();
+            var mockMailMonitor = new Mock<IMailMonitor>();
+
+            List<ConfigEntity> configEntityList = new List<ConfigEntity> { ConfigEntity };
+
+            mockConfigReader
+                .Setup(x => x.ReadConfig())
+                .Returns(configEntityList);
+            mockConfigVerify
+                .Setup(x => x.VerifyConfig(configEntityList))
+                .Returns(false);
+
+            var businessLogic = new MailBusinessLogic(mockConfigReader.Object, mockConfigVerify.Object, mockMailMonitor.Object);
+            string message = "Проверка завершена с ошибкой!";
+            var ex = Assert.ThrowsAsync<ArgumentException>(() => businessLogic.StartJob(Token));
+
+            StringAssert.Contains(message, ex.Message);
         }
 
         [TestMethod]
@@ -132,7 +196,7 @@ namespace MailManager.Tests
         }
 
         [TestMethod]
-        public void BusinessLogic_Dispose_Verify()
+        public void Dispose_MailMonitorDispose_Verify()
         {
             var mockConfigReader = new Mock<IConfigReader>();
             var mockConfigVerify = new Mock<IConfigVerify>();
