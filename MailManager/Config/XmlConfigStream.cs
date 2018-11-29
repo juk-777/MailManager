@@ -16,7 +16,7 @@ namespace MailManager.Config
         public List<ConfigEntity> ReadStream()
         {            
             if (SettingsPath == null)
-                throw new ApplicationException("Не указан путь к файлу конфигурации!");
+                throw new ArgumentNullException(nameof(SettingsPath), "Не указан путь к файлу конфигурации!");
 
             Console.WriteLine($"Файл: {Path.GetExtension(SettingsPath)}. Путь: {SettingsPath} ...");            
 
