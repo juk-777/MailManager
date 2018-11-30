@@ -104,14 +104,12 @@
     <Compile Include="Monitor\IMailMonitor.cs" />
     <Compile Include="Monitor\IMailProvider.cs" />
     <Compile Include="Action\MailAction.cs" />
-    <Compile Include="Monitor\IReadSeenUids.cs" />
-    <Compile Include="Monitor\ISaveSeenUids.cs" />
+    <Compile Include="Monitor\ISeenUidsManager.cs" />
     <Compile Include="Monitor\MailEntity.cs" />
     <Compile Include="Monitor\MailMonitor.cs" />
     <Compile Include="Monitor\MailTransfer.cs" />
     <Compile Include="Monitor\OpenPopProvider.cs" />
-    <Compile Include="Monitor\TxtReadSeenUids.cs" />
-    <Compile Include="Monitor\TxtSaveSeenUids.cs" />
+    <Compile Include="Monitor\TxtSeenUids.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

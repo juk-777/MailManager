@@ -6,9 +6,9 @@ using System;
 
 namespace MailManager.Monitor
 {
-    public class TxtSaveSeenUids : ISaveSeenUids
+    public class TxtSeenUids : ISeenUidsManager
     {
-        public bool Save(ConfigEntity configEntity, List<string> seenUids, bool addWrite)
+        public bool Write(ConfigEntity configEntity, List<string> seenUids, bool addWrite)
         {
             string path = AppDomain.CurrentDomain.BaseDirectory + @"Files";
             DirectoryInfo dirInfo = new DirectoryInfo(path);
@@ -31,6 +31,23 @@ namespace MailManager.Monitor
             }
 
             return true;
+        }
+
+        public List<string> Read(ConfigEntity configEntity)
+        {
+            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Files", configEntity.Mail + "_" + configEntity.Login + "_SeenUids" + ".txt");
+            List<string> seenUids = new List<string>();
+
+            using (StreamReader sr = new StreamReader(path, Encoding.Default))
+            {
+                string line;
+                while ((line = sr.ReadLine()) != null)
+                {
+                    seenUids.Add(line);
+                }
+            }
+
+            return seenUids;
         }
     }
 }

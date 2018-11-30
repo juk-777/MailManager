@@ -90,7 +90,7 @@ namespace MailManager.Tests
             mockMailSender.Setup(x => x.SendTo(It.IsAny<ConfigEntity>(), It.IsAny<MailEntity>(), It.IsAny<string>())).Returns(true);
 
             var mailAction = new Action.MailAction(mockMailSender.Object, mockMailCopy.Object, mockNotify.Object, mockPrint.Object);
-            var res = mailAction.ActionSend(ConfigEntity, MailEntity, ConfigEntity.MailActions[1].ActTypeValue);
+            var res = mailAction.ActionSend(ConfigEntity, MailEntity, ConfigEntity.MailActions[3].ActTypeValue);
 
             Assert.That(res, Is.True);
         }
@@ -106,7 +106,7 @@ namespace MailManager.Tests
             mockMailCopy.Setup(x => x.CopyTo(It.IsAny<ConfigEntity>(), It.IsAny<MailEntity>(), It.IsAny<string>())).Returns(true);
 
             var mailAction = new Action.MailAction(mockMailSender.Object, mockMailCopy.Object, mockNotify.Object, mockPrint.Object);
-            var res = mailAction.ActionCopy(ConfigEntity, MailEntity, ConfigEntity.MailActions[1].ActTypeValue);            
+            var res = mailAction.ActionCopy(ConfigEntity, MailEntity, ConfigEntity.MailActions[2].ActTypeValue);            
 
             Assert.That(res, Is.True);
         }

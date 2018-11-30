@@ -7,7 +7,6 @@ using System.Threading;
 using System.Text.RegularExpressions;
 using System.Net.Mail;
 using MailManager.Action;
-using System.IO;
 using System.Linq;
 
 namespace MailManager.Monitor
@@ -16,16 +15,14 @@ namespace MailManager.Monitor
     {
         private readonly IMailProvider _mailProvider;
         private readonly IMailAction _mailAction;
-        private readonly ISaveSeenUids _saverSeenUids;
-        private readonly IReadSeenUids _readerSeenUids;
+        private readonly ISeenUidsManager _seenUidsManager;
         private readonly List<Timer> _timers = new List<Timer>();
 
-        public MailMonitor(IMailProvider mailProvider, IMailAction mailAction, ISaveSeenUids saverSeenUids, IReadSeenUids readerSeenUids)
+        public MailMonitor(IMailProvider mailProvider, IMailAction mailAction, ISeenUidsManager seenUidsManager)
         {
             _mailProvider = mailProvider;
             _mailAction = mailAction;
-            _saverSeenUids = saverSeenUids;
-            _readerSeenUids = readerSeenUids;
+            _seenUidsManager = seenUidsManager;
         }
 
         public void StartMonitor(List<ConfigEntity> configEntityList)
@@ -45,7 +42,7 @@ namespace MailManager.Monitor
             var seenUidsTemp = FirstAccessToMail(configEntity);               
             var seenUids = from s in seenUidsTemp select s;
 
-            if (!_saverSeenUids.Save(configEntity, seenUids.ToList(), false))
+            if (!_seenUidsManager.Write(configEntity, seenUids.ToList(), false))
                 throw new ApplicationException("Ошибка при сохранении Uid прочитанных писем!");
 
             TimerCallback tm = OtherAccessToMail;
@@ -79,13 +76,13 @@ namespace MailManager.Monitor
                 Console.WriteLine($"\nВторичные проходы по письмам {configEntity.Mail} ...");
                 Console.ForegroundColor = ConsoleColor.Gray;
 
-                List<string> seenUids = _readerSeenUids.Read(configEntity);
+                List<string> seenUids = _seenUidsManager.Read(configEntity);
 
                 var mailTransfer = _mailProvider.GetUnseenMessages(configEntity, seenUids);
 
                 if (mailTransfer.Uids != null && mailTransfer.Uids.Count != 0)
                 {
-                    if (!_saverSeenUids.Save(configEntity, mailTransfer.Uids, true))
+                    if (!_seenUidsManager.Write(configEntity, mailTransfer.Uids, true))
                         throw new ApplicationException("Ошибка при сохранении Uid прочитанных писем!");
                 }                                
 

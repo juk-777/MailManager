@@ -85,11 +85,14 @@ namespace MailManager.Tests
             mockConfigReader
                 .Setup(x => x.ReadConfig())
                 .Returns(configEntityList);
+            mockConfigVerify
+                .Setup(x => x.VerifyConfig(configEntityList))
+                .Returns(true);
 
             var businessLogic = new MailBusinessLogic(mockConfigReader.Object, mockConfigVerify.Object, mockMailMonitor.Object);            
             await businessLogic.StartJob(Token);
 
-            mockConfigReader.VerifyAll();
+            mockConfigReader.Verify();
         }
 
         [TestMethod]
@@ -147,7 +150,7 @@ namespace MailManager.Tests
             var businessLogic = new MailBusinessLogic(mockConfigReader.Object, mockConfigVerify.Object, mockMailMonitor.Object);
             await businessLogic.StartJob(Token);
 
-            mockConfigVerify.VerifyAll();
+            mockConfigVerify.Verify();
         }
 
         [TestMethod]
@@ -196,7 +199,7 @@ namespace MailManager.Tests
         }
 
         [TestMethod]
-        public void Dispose_MailMonitorDispose_Verify()
+        public void Dispose_MailMonitorDispose_WasCalled()
         {
             var mockConfigReader = new Mock<IConfigReader>();
             var mockConfigVerify = new Mock<IConfigVerify>();

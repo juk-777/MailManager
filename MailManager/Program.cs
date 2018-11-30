@@ -48,8 +48,7 @@ namespace MailManager
             container.RegisterType<IMailMonitor, MailMonitor>();
             container.RegisterType<IMailProvider, OpenPopProvider>();
             container.RegisterType<IMailAction, MailAction>();
-            container.RegisterType<ISaveSeenUids, TxtSaveSeenUids>();
-            container.RegisterType<IReadSeenUids, TxtReadSeenUids>();
+            container.RegisterType<ISeenUidsManager, TxtSeenUids>();
             container.RegisterType<IMailSender, SmtpSender>();
             container.RegisterType<IMailCopy, CopyToFolder>();
             container.RegisterType<INotify, ConsoleNotify>();
