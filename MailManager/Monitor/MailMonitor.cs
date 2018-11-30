@@ -127,6 +127,11 @@ namespace MailManager.Monitor
                             regexMas[i] = new Regex($@"\w*{configEntity.IdentityMessages[i].IdTypeValue}\w*", RegexOptions.IgnoreCase);
                             matchesMas[i] = regexMas[i].Matches(mes.Body.ToString());
                             break;
+                        default:
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine($"\nОшибочные данные! {configEntity.IdentityMessages[i].IdType} - {configEntity.IdentityMessages[i].IdTypeValue}");
+                            Console.ForegroundColor = ConsoleColor.Gray;
+                            break;
                     }
                 }
 
@@ -172,6 +177,11 @@ namespace MailManager.Monitor
 
                     case ActionType.Print:
                         await Task.Run(() => _mailAction.ActionPrint(message));
+                        break;
+                    default:
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine($"\nОшибочные данные! {configEntity.MailActions[i].ActType} - {configEntity.MailActions[i].ActTypeValue}");
+                        Console.ForegroundColor = ConsoleColor.Gray;
                         break;
                 }
             }            

@@ -64,28 +64,28 @@ namespace MailManager.Config
 
                 foreach (var identity in configEntity.IdentityMessages)
                 {
-                    if (identity.IdType == IdentityType.To)
+                    if (identity?.IdType == IdentityType.To)
                         if (!Regex.IsMatch(identity.IdTypeValue, emailPattern, RegexOptions.IgnoreCase))
                         {
                             IsValidConfig = false;
                             Console.WriteLine("Некорректный email");
                             return false;
                         }
-                    if (identity.IdType == IdentityType.From)
+                    if (identity?.IdType == IdentityType.From)
                         if (!Regex.IsMatch(identity.IdTypeValue, emailPattern, RegexOptions.IgnoreCase))
                         {
                             IsValidConfig = false;
                             Console.WriteLine("Некорректный email");
                             return false;
                         }
-                    if (identity.IdType == IdentityType.Title)
+                    if (identity?.IdType == IdentityType.Title)
                         if (string.IsNullOrEmpty(identity.IdTypeValue))
                         {
                             IsValidConfig = false;
                             Console.WriteLine("Заголовок не указан!");
                             return false;
                         }
-                    if (identity.IdType == IdentityType.Body)
+                    if (identity?.IdType == IdentityType.Body)
                         if (string.IsNullOrEmpty(identity.IdTypeValue))
                         {
                             IsValidConfig = false;

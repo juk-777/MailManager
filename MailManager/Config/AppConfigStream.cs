@@ -15,6 +15,14 @@ namespace MailManager.Config
             ConfigEntity configEntity = new ConfigEntity();
             foreach (string s in sAll.AllKeys)
             {
+                if (s != "Mail" && s != "Port" && s != "Login" && s != "Password" && s != "MailAction" && s != "IdentityMessage")
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"\nОшибочные данные! {s}");
+                    Console.ForegroundColor = ConsoleColor.Gray;
+                    throw new ArgumentException();
+                }
+
                 if (s=="Mail")
                     configEntity.Mail = sAll.Get(s);
                 if (s == "Port")
@@ -38,6 +46,15 @@ namespace MailManager.Config
                         {
                             arrVal[j] = arrVal[j].Trim();
                         }
+
+                        if (arrVal[0] != ActionType.Notify.ToString() && arrVal[0] != ActionType.CopyTo.ToString() && arrVal[0] != ActionType.Forward.ToString() && arrVal[0] != ActionType.Print.ToString())
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine($"\nОшибочные данные! {arrVal[0]} - {arrVal[1]}");
+                            Console.ForegroundColor = ConsoleColor.Gray;
+                            throw new ArgumentException();
+                        }
+
                         if (arrVal[0] == "Notify")
                         {
                             configEntity.MailActions[i] = new MailAction
@@ -93,7 +110,16 @@ namespace MailManager.Config
                         {
                             arrVal[j] = arrVal[j].Trim();
                         }
-                        if (arrVal[0] == "To")
+
+                        if (arrVal[0] != IdentityType.To.ToString() && arrVal[0] != IdentityType.From.ToString() && arrVal[0] != IdentityType.Title.ToString() && arrVal[0] != IdentityType.Body.ToString())
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine($"\nОшибочные данные! {arrVal[0]} - {arrVal[1]}");
+                            Console.ForegroundColor = ConsoleColor.Gray;
+                            throw new ArgumentException();
+                        }
+
+                        if (arrVal[0] == IdentityType.To.ToString())
                         {
                             configEntity.IdentityMessages[i] = new IdentityMessage
                             {
@@ -102,7 +128,7 @@ namespace MailManager.Config
                             };
                             i++;
                         }
-                        if (arrVal[0] == "From")
+                        if (arrVal[0] == IdentityType.From.ToString())
                         {
                             configEntity.IdentityMessages[i] = new IdentityMessage
                             {
@@ -111,7 +137,7 @@ namespace MailManager.Config
                             };
                             i++;
                         }
-                        if (arrVal[0] == "Title")
+                        if (arrVal[0] == IdentityType.Title.ToString())
                         {
                             configEntity.IdentityMessages[i] = new IdentityMessage
                             {
@@ -120,7 +146,7 @@ namespace MailManager.Config
                             };
                             i++;
                         }
-                        if (arrVal[0] == "Body")
+                        if (arrVal[0] == IdentityType.Body.ToString())
                         {
                             configEntity.IdentityMessages[i] = new IdentityMessage
                             {
