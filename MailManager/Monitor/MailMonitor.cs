@@ -39,16 +39,18 @@ namespace MailManager.Monitor
             Console.WriteLine($"\nПервый проход по письмам {configEntity.Mail} ...");
             Console.ForegroundColor = ConsoleColor.Gray;
 
-            var seenUidsTemp = FirstAccessToMail(configEntity);               
+            var seenUidsTemp = FirstAccessToMail(configEntity);
             var seenUids = from s in seenUidsTemp select s;
 
             if (!_seenUidsManager.Write(configEntity, seenUids.ToList(), false))
                 throw new ApplicationException("Ошибка при сохранении Uid прочитанных писем!");
 
+            OtherAccessToMail(configEntity);
+
             TimerCallback tm = OtherAccessToMail;
-            var timer = new Timer(tm, configEntity, 0, 2000);
+            var timer = new Timer(tm, configEntity, 0, 5000);
             _timers.Add(timer);
-        }        
+        }
 
         private List<string> FirstAccessToMail(ConfigEntity configEntity)
         {            

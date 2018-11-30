@@ -101,11 +101,14 @@ namespace MailManager.Tests
             mockSeenUidsManager
                 .Setup(x => x.Write(It.IsAny<ConfigEntity>(), It.IsAny<List<string>>(), It.IsAny<bool>()))
                 .Returns(true);
+            mockSeenUidsManager
+                .Setup(x => x.Read(It.IsAny<ConfigEntity>()))
+                .Returns(It.IsAny<List<string>>());
 
             var mailMonitor = new MailMonitor(mockMailProvider.Object, mockMailAction.Object, mockSeenUidsManager.Object);
             mailMonitor.StartMonitorTask(ConfigEntity);
 
-            mockMailProvider.Verify(x => x.GetUnseenMessages(ConfigEntity, It.IsAny<List<string>>()), Times.AtLeastOnce);
+            mockMailProvider.Verify(x => x.GetUnseenMessages(It.IsAny<ConfigEntity>(), It.IsAny<List<string>>()), Times.AtLeastOnce);
         }
 
         [TestMethod]
@@ -133,35 +136,6 @@ namespace MailManager.Tests
 
             mockMailProvider.Verify();
             mockSeenUidsManager.Verify();
-        }
-
-        [TestMethod]
-        public void MailMonitor_MailActions_WasCalled()
-        {
-            var mockMailProvider = new Mock<IMailProvider>();
-            var mockMailAction = new Mock<IMailAction>();
-            var mockSeenUidsManager = new Mock<ISeenUidsManager>();
-
-            mockMailProvider
-                .Setup(x => x.GetAllMessages(ConfigEntity))
-                .Returns(MailTransfer);
-            mockMailProvider
-                .Setup(x => x.GetUnseenMessages(It.IsAny<ConfigEntity>(), It.IsAny<List<string>>()))
-                .Returns(new MailTransfer());
-            mockSeenUidsManager
-                .Setup(x => x.Write(It.IsAny<ConfigEntity>(), It.IsAny<List<string>>(), It.IsAny<bool>()))
-                .Returns(true);
-            mockSeenUidsManager
-                .Setup(x => x.Read(It.IsAny<ConfigEntity>()))
-                .Returns(It.IsAny<List<string>>());
-
-            var mailMonitor = new MailMonitor(mockMailProvider.Object, mockMailAction.Object, mockSeenUidsManager.Object);
-            mailMonitor.StartMonitorTask(ConfigEntity);
-
-            mockMailAction.Verify(x => x.ActionSend(ConfigEntity, MailEntity, ConfigEntity.MailActions[3].ActTypeValue), Times.Once());
-            mockMailAction.Verify(x => x.ActionCopy(ConfigEntity, MailEntity, ConfigEntity.MailActions[2].ActTypeValue), Times.Once());
-            mockMailAction.Verify(x => x.ActionNotify(MailEntity), Times.Once());
-            mockMailAction.Verify(x => x.ActionPrint(MailEntity), Times.Once());
         }
 
         [TestMethod]
