@@ -94,11 +94,11 @@
     <Compile Include="BusinessLogic\MailBusinessLogic.cs" />
     <Compile Include="Config\AppConfigStream.cs" />
     <Compile Include="Config\ConfigReader.cs" />
-    <Compile Include="Config\ConfigVerify.cs" />
+    <Compile Include="Config\ConfigVerifier.cs" />
     <Compile Include="Config\IConfigReader.cs" />
     <Compile Include="Config\ConfigEntity.cs" />
     <Compile Include="Config\IConfigStream.cs" />
-    <Compile Include="Config\IConfigVerify.cs" />
+    <Compile Include="Config\IConfigVerifier.cs" />
     <Compile Include="Config\XmlConfigStream.cs" />
     <Compile Include="Action\IMailAction.cs" />
     <Compile Include="Monitor\IMailMonitor.cs" />

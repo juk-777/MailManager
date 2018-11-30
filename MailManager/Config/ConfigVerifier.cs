@@ -4,39 +4,33 @@ using System.Text.RegularExpressions;
 
 namespace MailManager.Config
 {
-    public class ConfigVerify : IConfigVerify
+    public class ConfigVerifier : IConfigVerifier
     {
-        public bool IsValidConfig { get; private set; }
-
-        public bool VerifyConfig(List<ConfigEntity> configEntityList)
+        public bool Verify(List<ConfigEntity> configEntityList)
         {
             foreach (ConfigEntity configEntity in configEntityList)
             {
                 string mailPattern = @"^(pop\.|imap\.)\w*.\w*";
                 if (!Regex.IsMatch(configEntity.Mail, mailPattern, RegexOptions.IgnoreCase))
                 {
-                    IsValidConfig = false;
                     Console.WriteLine("Некорректное значение для поля Mail");
                     return false;
                 }
 
                 if (string.IsNullOrEmpty(configEntity.Login))
                 {
-                    IsValidConfig = false;
                     Console.WriteLine("Логин не указан!");
                     return false;
                 }
 
                 if (string.IsNullOrEmpty(configEntity.Password))
                 {
-                    IsValidConfig = false;
                     Console.WriteLine("Пароль не указан!");
                     return false;
                 }
 
                 if (configEntity.Port <= 0)
                 {
-                    IsValidConfig = false;
                     Console.WriteLine("Порт задан неверно!");
                     return false;
                 }
@@ -49,14 +43,12 @@ namespace MailManager.Config
                     if (action.ActType == ActionType.CopyTo)
                         if (string.IsNullOrEmpty(action.ActTypeValue))
                         {
-                            IsValidConfig = false;
                             Console.WriteLine("Не указана папка для сохранения копии письма!");
                             return false;
                         }
                     if (action.ActType == ActionType.Forward)
                         if (!Regex.IsMatch(action.ActTypeValue, emailPattern, RegexOptions.IgnoreCase))
                         {
-                            IsValidConfig = false;
                             Console.WriteLine("Некорректный email");
                             return false;
                         }
@@ -67,28 +59,24 @@ namespace MailManager.Config
                     if (identity?.IdType == IdentityType.To)
                         if (!Regex.IsMatch(identity.IdTypeValue, emailPattern, RegexOptions.IgnoreCase))
                         {
-                            IsValidConfig = false;
                             Console.WriteLine("Некорректный email");
                             return false;
                         }
                     if (identity?.IdType == IdentityType.From)
                         if (!Regex.IsMatch(identity.IdTypeValue, emailPattern, RegexOptions.IgnoreCase))
                         {
-                            IsValidConfig = false;
                             Console.WriteLine("Некорректный email");
                             return false;
                         }
                     if (identity?.IdType == IdentityType.Title)
                         if (string.IsNullOrEmpty(identity.IdTypeValue))
                         {
-                            IsValidConfig = false;
                             Console.WriteLine("Заголовок не указан!");
                             return false;
                         }
                     if (identity?.IdType == IdentityType.Body)
                         if (string.IsNullOrEmpty(identity.IdTypeValue))
                         {
-                            IsValidConfig = false;
                             Console.WriteLine("Содержание не указано!");
                             return false;
                         }
@@ -96,7 +84,6 @@ namespace MailManager.Config
             }
 
             Console.WriteLine("Проверка завершена успешно!");
-            IsValidConfig = true;
             return true;
         }
     }

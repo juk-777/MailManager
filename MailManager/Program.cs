@@ -44,7 +44,7 @@ namespace MailManager
             #region RegisterTypes
 
             container.RegisterType<IConfigReader, ConfigReader>();
-            container.RegisterType<IConfigVerify, ConfigVerify>();
+            container.RegisterType<IConfigVerifier, ConfigVerifier>();
             container.RegisterType<IMailMonitor, MailMonitor>();
             container.RegisterType<IMailProvider, OpenPopProvider>();
             container.RegisterType<IMailAction, MailAction>();

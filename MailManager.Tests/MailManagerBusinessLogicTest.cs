@@ -60,16 +60,16 @@ namespace MailManager.Tests
         public async Task StartJob_CancellationRequested()
         {
             var mockConfigReader = new Mock<IConfigReader>();
-            var mockConfigVerify = new Mock<IConfigVerify>();
+            var mockConfigVerifier = new Mock<IConfigVerifier>();
             var mockMailMonitor = new Mock<IMailMonitor>();
 
-            var businessLogic = new MailBusinessLogic(mockConfigReader.Object, mockConfigVerify.Object, mockMailMonitor.Object);
+            var businessLogic = new MailBusinessLogic(mockConfigReader.Object, mockConfigVerifier.Object, mockMailMonitor.Object);
 
             Cts.Cancel();
             await businessLogic.StartJob(Token);
 
             mockConfigReader.Verify(x => x.ReadConfig(), Times.Never);
-            mockConfigVerify.Verify(x => x.VerifyConfig(It.IsAny<List<ConfigEntity>>()), Times.Never);
+            mockConfigVerifier.Verify(x => x.Verify(It.IsAny<List<ConfigEntity>>()), Times.Never);
             mockMailMonitor.Verify(x => x.StartMonitor(It.IsAny<List<ConfigEntity>>()), Times.Never);
         }
 
@@ -77,7 +77,7 @@ namespace MailManager.Tests
         public async Task StartJob_ReadConfig_Verify()
         {
             var mockConfigReader = new Mock<IConfigReader>();
-            var mockConfigVerify = new Mock<IConfigVerify>();
+            var mockConfigVerifier = new Mock<IConfigVerifier>();
             var mockMailMonitor = new Mock<IMailMonitor>();
 
             List<ConfigEntity> configEntityList = new List<ConfigEntity> { ConfigEntity };
@@ -85,11 +85,11 @@ namespace MailManager.Tests
             mockConfigReader
                 .Setup(x => x.ReadConfig())
                 .Returns(configEntityList);
-            mockConfigVerify
-                .Setup(x => x.VerifyConfig(configEntityList))
+            mockConfigVerifier
+                .Setup(x => x.Verify(configEntityList))
                 .Returns(true);
 
-            var businessLogic = new MailBusinessLogic(mockConfigReader.Object, mockConfigVerify.Object, mockMailMonitor.Object);            
+            var businessLogic = new MailBusinessLogic(mockConfigReader.Object, mockConfigVerifier.Object, mockMailMonitor.Object);            
             await businessLogic.StartJob(Token);
 
             mockConfigReader.Verify();
@@ -99,14 +99,14 @@ namespace MailManager.Tests
         public void StartJob_ConfEntitysNotCreated_ExceptionThrown_Null()
         {
             var mockConfigReader = new Mock<IConfigReader>();
-            var mockConfigVerify = new Mock<IConfigVerify>();
+            var mockConfigVerifier = new Mock<IConfigVerifier>();
             var mockMailMonitor = new Mock<IMailMonitor>();
 
             mockConfigReader
                 .Setup(x => x.ReadConfig())
                 .Returns<List<ConfigEntity>>(null);
 
-            var businessLogic = new MailBusinessLogic(mockConfigReader.Object, mockConfigVerify.Object, mockMailMonitor.Object);
+            var businessLogic = new MailBusinessLogic(mockConfigReader.Object, mockConfigVerifier.Object, mockMailMonitor.Object);
             string message = "Файл конфигурации пуст!";
             var ex = Assert.ThrowsAsync<ArgumentException>(() => businessLogic.StartJob(Token));
 
@@ -117,14 +117,14 @@ namespace MailManager.Tests
         public void StartJob_ConfEntitysNotCreated_ExceptionThrown_ZeroValues()
         {
             var mockConfigReader = new Mock<IConfigReader>();
-            var mockConfigVerify = new Mock<IConfigVerify>();
+            var mockConfigVerifier = new Mock<IConfigVerifier>();
             var mockMailMonitor = new Mock<IMailMonitor>();
 
             mockConfigReader
                 .Setup(x => x.ReadConfig())
                 .Returns(new List<ConfigEntity>());
 
-            var businessLogic = new MailBusinessLogic(mockConfigReader.Object, mockConfigVerify.Object, mockMailMonitor.Object);
+            var businessLogic = new MailBusinessLogic(mockConfigReader.Object, mockConfigVerifier.Object, mockMailMonitor.Object);
             string message = "Файл конфигурации пуст!";
             var ex = Assert.ThrowsAsync<ArgumentException>(() => businessLogic.StartJob(Token));
 
@@ -132,10 +132,10 @@ namespace MailManager.Tests
         }
 
         [TestMethod]
-        public async Task StartJob_VerifyConfig_Verify()
+        public async Task StartJob_Verify_Config()
         {
             var mockConfigReader = new Mock<IConfigReader>();
-            var mockConfigVerify = new Mock<IConfigVerify>();
+            var mockConfigVerifier = new Mock<IConfigVerifier>();
             var mockMailMonitor = new Mock<IMailMonitor>();
 
             List<ConfigEntity> configEntityList = new List<ConfigEntity> { ConfigEntity };
@@ -143,21 +143,21 @@ namespace MailManager.Tests
             mockConfigReader
                 .Setup(x => x.ReadConfig())
                 .Returns(configEntityList);
-            mockConfigVerify
-                .Setup(x => x.VerifyConfig(configEntityList))
+            mockConfigVerifier
+                .Setup(x => x.Verify(configEntityList))
                 .Returns(true);
 
-            var businessLogic = new MailBusinessLogic(mockConfigReader.Object, mockConfigVerify.Object, mockMailMonitor.Object);
+            var businessLogic = new MailBusinessLogic(mockConfigReader.Object, mockConfigVerifier.Object, mockMailMonitor.Object);
             await businessLogic.StartJob(Token);
 
-            mockConfigVerify.Verify();
+            mockConfigVerifier.Verify();
         }
 
         [TestMethod]
-        public void StartJob_VerifyConfig_ExceptionThrown_ReturnFalse()
+        public void StartJob_Verify_Config_ExceptionThrown_ReturnFalse()
         {
             var mockConfigReader = new Mock<IConfigReader>();
-            var mockConfigVerify = new Mock<IConfigVerify>();
+            var mockConfigVerifier = new Mock<IConfigVerifier>();
             var mockMailMonitor = new Mock<IMailMonitor>();
 
             List<ConfigEntity> configEntityList = new List<ConfigEntity> { ConfigEntity };
@@ -165,11 +165,11 @@ namespace MailManager.Tests
             mockConfigReader
                 .Setup(x => x.ReadConfig())
                 .Returns(configEntityList);
-            mockConfigVerify
-                .Setup(x => x.VerifyConfig(configEntityList))
+            mockConfigVerifier
+                .Setup(x => x.Verify(configEntityList))
                 .Returns(false);
 
-            var businessLogic = new MailBusinessLogic(mockConfigReader.Object, mockConfigVerify.Object, mockMailMonitor.Object);
+            var businessLogic = new MailBusinessLogic(mockConfigReader.Object, mockConfigVerifier.Object, mockMailMonitor.Object);
             string message = "Проверка завершена с ошибкой!";
             var ex = Assert.ThrowsAsync<ArgumentException>(() => businessLogic.StartJob(Token));
 
@@ -180,7 +180,7 @@ namespace MailManager.Tests
         public async Task StartJob_StartMonitor_WasCalled()
         {
             var mockConfigReader = new Mock<IConfigReader>();
-            var mockConfigVerify = new Mock<IConfigVerify>();
+            var mockConfigVerifier = new Mock<IConfigVerifier>();
             var mockMailMonitor = new Mock<IMailMonitor>();
 
             List<ConfigEntity> configEntityList = new List<ConfigEntity> {new ConfigEntity()};
@@ -188,11 +188,11 @@ namespace MailManager.Tests
             mockConfigReader
                 .Setup(x => x.ReadConfig())
                 .Returns(configEntityList);
-            mockConfigVerify
-                .Setup(x => x.VerifyConfig(configEntityList))
+            mockConfigVerifier
+                .Setup(x => x.Verify(configEntityList))
                 .Returns(true);
 
-            var businessLogic = new MailBusinessLogic(mockConfigReader.Object, mockConfigVerify.Object, mockMailMonitor.Object);
+            var businessLogic = new MailBusinessLogic(mockConfigReader.Object, mockConfigVerifier.Object, mockMailMonitor.Object);
             await businessLogic.StartJob(Token);
 
             mockMailMonitor.Verify(x => x.StartMonitor(It.IsAny<List<ConfigEntity>>()), Times.Once());
@@ -202,10 +202,10 @@ namespace MailManager.Tests
         public void Dispose_MailMonitorDispose_WasCalled()
         {
             var mockConfigReader = new Mock<IConfigReader>();
-            var mockConfigVerify = new Mock<IConfigVerify>();
+            var mockConfigVerifier = new Mock<IConfigVerifier>();
             var mockMailMonitor = new Mock<IMailMonitor>();
 
-            var businessLogic = new MailBusinessLogic(mockConfigReader.Object, mockConfigVerify.Object, mockMailMonitor.Object);
+            var businessLogic = new MailBusinessLogic(mockConfigReader.Object, mockConfigVerifier.Object, mockMailMonitor.Object);
             businessLogic.Dispose();
 
             mockMailMonitor.Verify(x => x.Dispose(), Times.Once());

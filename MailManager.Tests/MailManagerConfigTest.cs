@@ -96,134 +96,134 @@ namespace MailManager.Tests
         }
 
         [TestMethod]
-        public void VerifyConfig_True_Returned()
+        public void Verify_Config_True_Returned()
         {
             List<ConfigEntity> configEntityList = new List<ConfigEntity> { ConfigEntity };
 
-            var configVerify = new ConfigVerify();
-            var result = configVerify.VerifyConfig(configEntityList);
+            var configVerifier = new ConfigVerifier();
+            var result = configVerifier.Verify(configEntityList);
 
             Assert.True(result);
         }
 
         [TestMethod]
-        public void VerifyConfig_Not_Correct_Mail()
+        public void Verify_Config_Not_Correct_Mail()
         {
             ConfigEntity.Mail = "popp.yandex.ru";
             List<ConfigEntity> configEntityList = new List<ConfigEntity> { ConfigEntity };
 
-            var configVerify = new ConfigVerify();
-            configVerify.VerifyConfig(configEntityList);
+            var configVerifier = new ConfigVerifier();
+            var result = configVerifier.Verify(configEntityList);
 
-            Assert.False(configVerify.IsValidConfig);
+            Assert.False(result);
         }
 
         [TestMethod]
-        public void VerifyConfig_Not_Correct_Login()
+        public void Verify_Config_Not_Correct_Login()
         {
             ConfigEntity.Login = null;
             List<ConfigEntity> configEntityList = new List<ConfigEntity> { ConfigEntity };
 
-            var configVerify = new ConfigVerify();
-            configVerify.VerifyConfig(configEntityList);
+            var configVerifier = new ConfigVerifier();
+            var result = configVerifier.Verify(configEntityList);
 
-            Assert.False(configVerify.IsValidConfig);
+            Assert.False(result);
         }
 
         [TestMethod]
-        public void VerifyConfig_Not_Correct_Password()
+        public void Verify_Config_Not_Correct_Password()
         {
             ConfigEntity.Password = null;
             List<ConfigEntity> configEntityList = new List<ConfigEntity> { ConfigEntity };
 
-            var configVerify = new ConfigVerify();
-            configVerify.VerifyConfig(configEntityList);
+            var configVerifier = new ConfigVerifier();
+            var result = configVerifier.Verify(configEntityList);
 
-            Assert.False(configVerify.IsValidConfig);
+            Assert.False(result);
         }
 
         [TestMethod]
-        public void VerifyConfig_Not_Correct_Port()
+        public void Verify_Config_Not_Correct_Port()
         {
             ConfigEntity.Port = 0;
             List<ConfigEntity> configEntityList = new List<ConfigEntity> { ConfigEntity };
 
-            var configVerify = new ConfigVerify();
-            configVerify.VerifyConfig(configEntityList);
+            var configVerifier = new ConfigVerifier();
+            var result = configVerifier.Verify(configEntityList);
 
-            Assert.False(configVerify.IsValidConfig);
+            Assert.False(result);
         }
 
         [TestMethod]
-        public void VerifyConfig_Not_Correct_MailActions_CopyTo()
+        public void Verify_Config_Not_Correct_MailActions_CopyTo()
         {
             ConfigEntity.MailActions[2].ActTypeValue = null;
             List<ConfigEntity> configEntityList = new List<ConfigEntity> { ConfigEntity };
 
-            var configVerify = new ConfigVerify();
-            configVerify.VerifyConfig(configEntityList);
+            var configVerifier = new ConfigVerifier();
+            var result = configVerifier.Verify(configEntityList);
 
-            Assert.False(configVerify.IsValidConfig);
+            Assert.False(result);
         }
 
         [TestMethod]
-        public void VerifyConfig_Not_Correct_MailActions_Forward()
+        public void Verify_Config_Not_Correct_MailActions_Forward()
         {
             ConfigEntity.MailActions[3].ActTypeValue = "juk_777@@mail.ru";
             List<ConfigEntity> configEntityList = new List<ConfigEntity> { ConfigEntity };
 
-            var configVerify = new ConfigVerify();
-            configVerify.VerifyConfig(configEntityList);
+            var configVerifier = new ConfigVerifier();
+            var result = configVerifier.Verify(configEntityList);
 
-            Assert.False(configVerify.IsValidConfig);
+            Assert.False(result);
         }
 
         [TestMethod]
-        public void VerifyConfig_Not_Correct_IdentityMessages_To()
+        public void Verify_Config_Not_Correct_IdentityMessages_To()
         {
             ConfigEntity.IdentityMessages[0].IdTypeValue = "gus.guskovskij@@mail.ru";
             List<ConfigEntity> configEntityList = new List<ConfigEntity> { ConfigEntity };
 
-            var configVerify = new ConfigVerify();
-            configVerify.VerifyConfig(configEntityList);
+            var configVerifier = new ConfigVerifier();
+            var result = configVerifier.Verify(configEntityList);
 
-            Assert.False(configVerify.IsValidConfig);
+            Assert.False(result);
         }
 
         [TestMethod]
-        public void VerifyConfig_Not_Correct_IdentityMessages_From()
+        public void Verify_Config_Not_Correct_IdentityMessages_From()
         {
             ConfigEntity.IdentityMessages[1].IdTypeValue = "juk_777@@mail.ru";
             List<ConfigEntity> configEntityList = new List<ConfigEntity> { ConfigEntity };
 
-            var configVerify = new ConfigVerify();
-            configVerify.VerifyConfig(configEntityList);
+            var configVerifier = new ConfigVerifier();
+            var result = configVerifier.Verify(configEntityList);
 
-            Assert.False(configVerify.IsValidConfig);
+            Assert.False(result);
         }
 
         [TestMethod]
-        public void VerifyConfig_Not_Correct_IdentityMessages_Title()
+        public void Verify_Config_Not_Correct_IdentityMessages_Title()
         {
             ConfigEntity.IdentityMessages[2].IdTypeValue = null;
             List<ConfigEntity> configEntityList = new List<ConfigEntity> { ConfigEntity };
 
-            var configVerify = new ConfigVerify();
-            configVerify.VerifyConfig(configEntityList);
+            var configVerifier = new ConfigVerifier();
+            var result = configVerifier.Verify(configEntityList);
 
-            Assert.False(configVerify.IsValidConfig);
+            Assert.False(result);
         }
 
         [TestMethod]
-        public void VerifyConfig_Not_Correct_IdentityMessages_Body()
+        public void Verify_Config_Not_Correct_IdentityMessages_Body()
         {
             ConfigEntity.IdentityMessages[3].IdTypeValue = null;
             List<ConfigEntity> configEntityList = new List<ConfigEntity> { ConfigEntity };
 
-            var configVerify = new ConfigVerify();
-            configVerify.VerifyConfig(configEntityList);
+            var configVerifier = new ConfigVerifier();
+            var result = configVerifier.Verify(configEntityList);
 
-            Assert.False(configVerify.IsValidConfig);
+            Assert.False(result);
         }
     }
 }

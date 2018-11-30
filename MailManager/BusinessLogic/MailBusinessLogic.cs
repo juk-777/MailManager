@@ -10,13 +10,13 @@ namespace MailManager.BusinessLogic
     public class MailBusinessLogic : IMailBusinessLogic
     {
         private readonly IConfigReader _configReader;
-        private readonly IConfigVerify _configVerify;
+        private readonly IConfigVerifier _configVerifier;
         private readonly IMailMonitor _mailMonitor;
         
-        public MailBusinessLogic(IConfigReader configReader, IConfigVerify configVerify, IMailMonitor mailMonitor)
+        public MailBusinessLogic(IConfigReader configReader, IConfigVerifier configVerifier, IMailMonitor mailMonitor)
         {
             _configReader = configReader;
-            _configVerify = configVerify;
+            _configVerifier = configVerifier;
             _mailMonitor = mailMonitor;
         }
         public async Task StartJob(CancellationToken token)
@@ -33,7 +33,7 @@ namespace MailManager.BusinessLogic
                 throw new ArgumentException("Файл конфигурации пуст!");
 
             Console.WriteLine("\nПроверка конфигурации ...");
-            if (! _configVerify.VerifyConfig(configEntityList))
+            if (! _configVerifier.Verify(configEntityList))
                 throw new ArgumentException("Проверка завершена с ошибкой!");
 
             Console.WriteLine("\nЗапускаем мониторинг почты ...");
